@@ -1,0 +1,75 @@
+const express = require('express');
+const cors = require('cors');
+const mysql = require('mysql');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(express.json());
+
+const pool = mysql.createPool({
+  host: 'localhost', // Remove port number
+  user: 'root',
+  password: '',
+  database: 'coincalendar'
+});
+/////// SIGN UP
+app.post('/signup', (req, res) => {
+  const { username, password, fname, lname, email, phone } = req.body;
+
+  // Query the last inserted accountID
+  pool.query('SELECT MAX(accountID) AS maxAccountID FROM Account', (error, results) => {
+    if (error) {
+      console.error('Error fetching max accountID:', error);
+      res.status(500).json({ error: 'Error signing up. Please try again.' });
+      return;
+    }
+
+    // Calculate the next available accountID
+    const nextAccountID = results[0].maxAccountID ? results[0].maxAccountID + 1 : 1;
+
+    const newUser = {
+      accountID: nextAccountID,
+      username,
+      password,
+      fname,
+      lname,
+      email,
+      phone
+    };
+
+    pool.query('INSERT INTO Account SET ?', newUser, (insertError, insertResults) => {
+      if (insertError) {
+        console.error('Error signing up:', insertError);
+        res.status(500).json({ error: 'Error signing up. Please try again.' });
+        return;
+      }
+      res.status(201).json({ message: 'Sign up successful', accountID: nextAccountID });
+    });
+  });
+});
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Check username and password in database
+  const query = `SELECT * FROM Account WHERE username = '${username}' AND password = '${password}'`;
+  pool.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    // Check if user exists in database
+    if (results.length > 0) {
+      return res.json({ success: true });
+    } else {
+      return res.status(401).json({ success: false, error: 'Invalid username or password' });
+    }
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
