@@ -199,7 +199,7 @@ export default function HomePage() {
           <button onClick={handleRemoveEvent}>Remove Event</button>
         </div>
       )}
-    <a href="/">Go to login page (DEVTOOL)</a>
+    <a href="/">Log out (DEVTOOL)</a>
     </div>
   );
 }
