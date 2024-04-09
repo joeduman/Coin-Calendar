@@ -9,15 +9,14 @@ export default function DashboardPage() {
     return (
         <div>
         <nav className="navbar">
-            <a href="/" className="site-title">
-                Coin Calendar
-            </a>
-            <ul>
-                <li><a href="/settings">Settings</a></li>
-                <li className="active"><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/home">Home</a></li>
-            </ul>
-        </nav>
+        <a href="/" className="site-title">Coin Calendar</a>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li className="active"><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/">Log Out</a></li>
+        </ul>
+      </nav>
 
         <h1>Account Dashboard</h1>
         <div class="dashcontainer">
