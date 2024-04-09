@@ -105,7 +105,7 @@ export default function HomePage() {
         </ul>
       </nav>
       <div className="App">
-      <h1>{username}'s Coin Calendar</h1>
+      <h1><u>{username}'s Coin Calendar</u></h1>
       <div className="container">
         <div className="add-event-container">
           <div className="add-event">
