@@ -95,7 +95,16 @@ export default function HomePage() {
   }
 
   return (
-    <div className="App">
+    <div>
+      <nav className="navbar">
+        <a href="/" className="site-title">Coin Calendar</a>
+        <ul>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li className="active"><a href="/home">Home</a></li>
+        </ul>
+      </nav>
+      <div className="App">
       <h1>{username}'s Coin Calendar</h1>
       <div className="container">
         <div className="add-event-container">
@@ -208,6 +217,7 @@ export default function HomePage() {
         </div>
       )}
     <a href="/">Log out (DEVTOOL)</a>
+    </div>
     </div>
   );
 }

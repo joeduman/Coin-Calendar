@@ -24,6 +24,7 @@ export default function LoginPage() {
                 password
             });
             alert('Login successful'); // Display success message
+            console.log("successful login")
             window.location.href = '/home';
           } catch (error) {
             console.error('Error Logging in:', error);

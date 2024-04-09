@@ -1,0 +1,74 @@
+.settingscontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 75vh;
+    width: 100%;
+    /*background-color: #d9d9d9;*/
+}
+
+.form-group {
+    padding: 3rem;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr); /* Increase the number of rows */
+    grid-template-columns:repeat(2, 1fr); /* Set to a single column */
+    grid-gap: 20px;
+    text-align: center;
+    background-color: #d9d9d9;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-group .delAccount{
+    background-color: red;
+    margin-bottom: 15px; /* Add vertical spacing between input elements */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 125px;
+    box-sizing: border-box;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-group button{
+    background-color: #6EB7FB;
+    margin-bottom: 10px; /* Add vertical spacing between input elements */
+    margin-right: 3rem;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5rem;
+    width: 125px;
+    box-sizing: border-box;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-group input[type="text"]{
+    margin-bottom: 15px; /* Add vertical spacing between input elements */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group button:hover {
+    background-color: #0056b3;
+}
+
+.form-group a {
+    text-decoration: none;
+    margin-right: 3rem;
+    color: #007bff;
+}
+
+.form-group a:hover {
+    text-decoration: underline;
+}
+
+
