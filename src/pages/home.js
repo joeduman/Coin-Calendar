@@ -99,9 +99,10 @@ export default function HomePage() {
       <nav className="navbar">
         <a href="/" className="site-title">Coin Calendar</a>
         <ul>
-            <li><a href="/settings">Settings</a></li>
-            <li><a href="/dashboard">Dashboard</a></li>
             <li className="active"><a href="/home">Home</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/">Log Out</a></li>
         </ul>
       </nav>
       <div className="App">
@@ -216,7 +217,6 @@ export default function HomePage() {
           <button onClick={handleRemoveEvent}>Remove Event</button>
         </div>
       )}
-    <a href="/">Log out (DEVTOOL)</a>
     </div>
     </div>
   );
