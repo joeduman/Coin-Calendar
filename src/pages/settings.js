@@ -11,9 +11,10 @@ export default function SettingsPage() {
             <nav className="navbar">
                 <a href="/" className="site-title">Coin Calendar</a>
                 <ul>
-                    <li className="active"><a href="/settings">Settings</a></li>
-                    <li><a href="/dashboard">Dashboard</a></li>
                     <li><a href="/home">Home</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li className="active"><a href="/settings">Settings</a></li>
+                    <li><a href="/">Log Out</a></li>
                 </ul>
             </nav>
             <h1>Account Settings</h1>
