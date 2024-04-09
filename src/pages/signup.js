@@ -55,6 +55,7 @@ export default function LoginPage() {
       });
       alert('Sign up successful'); // Display success message
       // You can reset the form fields here if needed
+      window.location.href = '/';
     } catch (error) {
       console.error('Error signing up:', error);
       alert('Error signing up. Please try again.');
