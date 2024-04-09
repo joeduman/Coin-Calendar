@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useParams, useLocation } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from "react-datepicker";
@@ -26,6 +26,7 @@ const localizer = dateFnsLocalizer({
 const events = [];
 
 export default function HomePage() {
+
   const [newEvent, setNewEvent] = useState({
     title: "",
     start: "",
@@ -40,6 +41,13 @@ export default function HomePage() {
   const [balance, setBalance] = useState(0);
   const [expectedBalance, setExpectedBalance] = useState(0);
   const [updatedBalance, setUpdatedBalance] = useState(0);
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    // Fetch username from local storage
+    const storedUsername = localStorage.getItem('username');
+    setUsername(storedUsername);
+  }, []);
 
   useEffect(() => {
     setExpectedBalance(balance);
@@ -88,7 +96,7 @@ export default function HomePage() {
 
   return (
     <div className="App">
-      <h1>Coin Calendar</h1>
+      <h1>{username}'s Coin Calendar</h1>
       <div className="container">
         <div className="add-event-container">
           <div className="add-event">
