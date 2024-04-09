@@ -23,6 +23,7 @@ export default function LoginPage() {
                 username,
                 password
             });
+            localStorage.setItem('username', username);
             alert('Login successful'); // Display success message
             console.log("successful login")
             window.location.href = '/home';
