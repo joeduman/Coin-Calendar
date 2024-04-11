@@ -24,8 +24,32 @@ const localizer = dateFnsLocalizer({
 });
 
 const events = [];
+const recurringBills = [];
+
 
 export default function HomePage() {
+
+    const [newBill, setNewBill] = useState({
+        name: "",
+        amount: "",
+        day: ""
+    });
+
+    const [allBills, setAllBills] = useState(recurringBills);
+
+    function handleNewBill() {
+        if (!newBill.name || !newBill.amount || !newBill.day) {
+            alert("Please fill out all fields");
+            return;
+        }
+        newBill.amount = '$' + newBill.amount
+        setAllBills([...allBills, newBill]);
+        setNewBill({
+            name: "",
+            amount: "",
+            day: ""
+        });
+    }
 
   const [newEvent, setNewEvent] = useState({
     title: "",
@@ -181,7 +205,58 @@ export default function HomePage() {
             </label>
             <button onClick={handleAddEvent}>Add Event</button>
           </div>
-        </div>
+                  </div>
+                  <div className="container">
+                      <div className="add-event-container">
+                          <div className="add-event">
+                              <h2>Add Recurring Bill</h2>
+                              <input
+                                  type="text"
+                                  placeholder="Bill Name"
+                                  value={newBill.name}
+                                  onChange={(e) =>
+                                      setNewBill({ ...newBill, name: e.target.value })
+                                  }
+                              />
+                              <input
+                                  type="text"
+                                  placeholder="Amount"
+                                  value={newBill.amount}
+                                  onChange={(e) =>
+                                      setNewBill({ ...newBill, amount: e.target.value })
+                                  }
+                              />
+                              <input
+                                  type="text"
+                                  placeholder="Day"
+                                  value={newBill.day}
+                                  onChange={(e) =>
+                                      setNewBill({ ...newBill, day: e.target.value })
+                                  }
+                              />
+                              <button onClick={handleNewBill}>Add Bill</button>
+                              <table>
+                                  <thead>
+                                      <tr>
+                                          <th className="column">Name</th>
+                                          <th className="column">Amount</th>
+                                          <th className="column">Day</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      {allBills.map((bill, index) => (
+                                          <tr key={index}>
+                                              <td className="entry">{bill.name}</td>
+                                              <td className="entry">{bill.amount}</td>
+                                              <td className="entry">{bill.day}</td>
+                                          </tr>
+                                      ))}
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+                  
         <div className="balance-section">
           <h2>Balance: ${balance}</h2>
           <input

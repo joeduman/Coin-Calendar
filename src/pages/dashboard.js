@@ -25,7 +25,7 @@ export default function DashboardPage() {
             <div class="quadrant">Recurring Bills</div>
             <div class="quadrant">All Upcoming Events</div>
         </div>
-
+              
 
 
 
