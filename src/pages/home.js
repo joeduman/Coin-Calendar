@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useParams, useLocation } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import { Link } from 'react-router-dom';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -123,10 +124,10 @@ export default function HomePage() {
       <nav className="navbar">
         <a href="/" className="site-title">Coin Calendar</a>
         <ul>
-            <li className="active"><a href="/home">Home</a></li>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/settings">Settings</a></li>
-            <li><a href="/">Log Out</a></li>
+        <li className="active"><Link to="/home">Home</Link></li>
+            <li><Link to="/:username/dashboard">Dashboard</Link></li>
+            <li><Link to="/:username/settings">Settings</Link></li>
+            <li><Link to="/">Log Out</Link></li>
         </ul>
       </nav>
       <div className="App">

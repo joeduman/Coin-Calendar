@@ -70,6 +70,89 @@ app.post('/login', (req, res) => {
   });
 });
 
+app.get("/expenses/:username", (req, res) => {
+  const username = req.params.username; // Use the parameter passed in the URL
+  const pre_query = `SELECT accountID FROM Account WHERE username = '${username}'`;
+  pool.query(pre_query, (pre_err, pre_results) => {
+    if (pre_err) {
+      console.error('Error executing pre_query:', pre_err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    // Extract accountID from the pre_results
+    const accountID = pre_results[0].accountID;
+
+    const query = `SELECT * FROM Expense WHERE accountID = '${accountID}'`;
+    pool.query(query, (err, results) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).json({ success: false, error: 'Internal server error' });
+      } else {
+        res.send(results); // Corrected variable name
+      }
+    });
+  });
+});
+
+app.get("/events/:username", (req, res) => {
+  const username = req.params.username; // Use the parameter passed in the URL
+  const pre_query = `SELECT accountID FROM Account WHERE username = '${username}'`;
+  pool.query(pre_query, (pre_err, pre_results) => {
+    if (pre_err) {
+      console.error('Error executing pre_query:', pre_err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    // Extract accountID from the pre_results
+    const accountID = pre_results[0].accountID;
+
+    const query = `SELECT * FROM Event WHERE accountID = '${accountID}'`;
+    pool.query(query, (err, results) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).json({ success: false, error: 'Internal server error' });
+      } else {
+        res.send(results); // Corrected variable name
+      }
+    });
+  });
+});
+
+app.get("/recurring/:username", (req, res) => {
+  const username = req.params.username; // Use the parameter passed in the URL
+  const pre_query = `SELECT accountID FROM Account WHERE username = '${username}'`;
+  pool.query(pre_query, (pre_err, pre_results) => {
+    if (pre_err) {
+      console.error('Error executing pre_query:', pre_err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    // Extract accountID from the pre_results
+    const accountID = pre_results[0].accountID;
+
+    const query = `SELECT * FROM \`Recurring-bill\` WHERE accountID = '${accountID}'`;
+    pool.query(query, (err, results) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).json({ success: false, error: 'Internal server error' });
+      } else {
+        res.send(results); // Corrected variable name
+      }
+    });
+  });
+});
+
+app.get("/details/:username", (req, res) => {
+  const username = req.params.username; // Use the parameter passed in the URL
+  const query = `SELECT * FROM Account WHERE username = "test"`;
+  pool.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
