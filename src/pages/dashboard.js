@@ -50,7 +50,10 @@ const DashboardPage = () => {
             .catch(err => console.log(err))            
         }
     }, [username]);
-     
+    const[selectedBudget, setSelectedBudget] = useState('Option 1');
+    const handleBudgetChange = (e) => {
+        setSelectedBudget(e.target.value);
+    };
       return (
         <div>
         <nav className="navbar">
@@ -66,9 +69,20 @@ const DashboardPage = () => {
         <div class="dashcontainer">
             <div class="quadrant">
                 Budget Plan
-                <p> WIP not done </p>
-            
-            
+                <div>
+                    <h1 className="budgetHead">Select Budget Plan</h1>
+                    <h2 className="budgetLabel">Essentials/Spending/Saving</h2>
+                    <select value={selectedBudget} onChange={handleBudgetChange}>
+                        <option value='Option 1'>None</option>
+                        <option value="Option 2">50% / 30% / 20%</option>
+                        <option value="Option 3">60% / 20% / 20%</option>
+                        <option value="Option 4">40% / 50% / 10%</option>
+                    </select>
+                    {selectedBudget === 'Option 1' && <div></div>}
+                    {selectedBudget === 'Option 2' && <div></div>}
+                    {selectedBudget === 'Option 3' && <div></div>}
+                    {selectedBudget === 'Option 4' && <div></div>}
+                </div>
             </div>
             <div class="quadrant">Recent Transactions
                 <table className="table">
