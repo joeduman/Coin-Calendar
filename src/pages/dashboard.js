@@ -78,10 +78,26 @@ const DashboardPage = () => {
                         <option value="Option 3">60% / 20% / 20%</option>
                         <option value="Option 4">40% / 50% / 10%</option>
                     </select>
-                    {selectedBudget === 'Option 1' && <div></div>}
-                    {selectedBudget === 'Option 2' && <div></div>}
-                    {selectedBudget === 'Option 3' && <div></div>}
-                    {selectedBudget === 'Option 4' && <div></div>}
+                    {selectedBudget === 'Option 2' && <div>
+                    <h1 className="budgetdesc">50 / 30 / 20 Split</h1>
+                    <p className="budgetdesc">The 50/30/20 budgeting plan is a general rule of thumb perfect for those new to budgeting. It allocates
+                        50% of income to essentials like rent, food, bills, etc., 30% to a spending budget for any personal desires
+                        or outings, and 20% to savings for the future or investments.</p>
+                    </div>}
+                    {selectedBudget === 'Option 3' && <div>
+                    <h1 className="budgetdesc">60 / 10 / 30 Split</h1>
+                    <p className="budgetdesc">The 60/10/30 budgeting plan is designed to focus slightly more on essential spending and savings rather than
+                        personal spending. It is useful for those with higher costs of living as well as those who tend to be more frugal
+                        with their non-essential spending, as it only allocates 10% of income to 'wants'. 
+                    </p>
+                    </div>}
+                    {selectedBudget === 'Option 4' && <div>
+                    <h1 className="budgetdesc">40 / 50 / 10 Split</h1>
+                    <p className="budgetdesc">The 40/50/10 budget plan is geared toward anyone who wishes to dedicate more of their paycheck to their lifestyle.
+                        It draws a few extra funds from both savings and essentials to allocate to personal spending. This is potentially useful
+                    to those with multiple sources of income or an excess of funds in general. 
+                    </p>
+                </div>}
                 </div>
             </div>
             <div class="quadrant">Recent Transactions
