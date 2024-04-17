@@ -1,10 +1,7 @@
-
-
-
 .navbar{
     box-sizing: border-box;
     margin: 0;
-    background-color: #0062BD;
+    background-color: #2196f3;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -13,9 +10,13 @@
     padding: 0 1rem;
 }
 
-.site-title{
+.site-title {
     font-size: 2rem;
-}
+    background-image: url('coin_calendar.png');
+    background-repeat: no-repeat;
+    background-size: 5rem; /* Adjust the size of the image */
+    background-position: 35%;
+  }
 
 .navbar ul {
     padding: 0;
@@ -42,4 +43,30 @@
 .navbar li:hover {
     background-color: #6EB7FB;
     border-radius: 10px;
+}
+
+/* Styles for the legend section */
+.legend {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Spacing between legend items */
+    font-size: 1rem;
+    color: rgb(255, 251, 0); /* Ensure text is white */
+}
+
+/* Styles for the legend items */
+.legend-item {
+    width: 1rem; /* Width of the colored square */
+    height: 1rem; /* Height of the colored square */
+    display: inline-block;
+}
+
+/* Define colors for legend items */
+.orange-square {
+    background-color: orange; /* Orange color for expenses */
+}
+
+.blue-square {
+    background-color: blue; /* Blue color for events */
 }
