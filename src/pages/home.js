@@ -225,6 +225,7 @@ export default function HomePage() {
 
   function handleUpdateBalance() {
     setBalance(updatedBalance);
+    localStorage.setItem('balance', updatedBalance);
   }
 
   function handleEventClick(event) {
