@@ -34,19 +34,20 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="page">
-            <div className="cover">
+        <div className="loginPage">
+            <h1 className="pagetitle">Coin Calendar</h1>
+            <div className="loginCover">
                 <h1>Login</h1>
-                <form className="loginTitle" onSubmit={handleSubmit}>
-                    <p className="logintitle">Username</p>
-                    <input className="logininput" type="text" placeholder="Type your username" value={username} onChange={(e) => setUsername(e.target.value)} />
-                    <p className="logintitle">Password</p>
-                    <input className="logininput" type="password" placeholder="Type your password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <form onSubmit={handleSubmit}>
+                    <p className="loginText">Username</p>
+                    <input className="loginInput" type="text" placeholder="Type your username" value={username} onChange={(e) => setUsername(e.target.value)} />
+                    <p className="loginText">Password</p>
+                    <input className="loginInput" type="password" placeholder="Type your password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <p className="pwtext">Forgot Password?</p>
                     {error && <p className="error">{error}</p>}
-                    <button type="submit" className="login-btn">Login</button>
+                    <button type="submit" className="loginBtn">LOGIN</button>
                 </form>
-                <p className="logintext">Don't have an account? <Link to="/signup" className="signup-link">Sign Up</Link></p>
-                <Link to="/home" className="logintext">Go to home page (DEVTOOL)</Link>
+                <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
             </div>
         </div>
     );

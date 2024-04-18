@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import { HiOutlineQuestionMarkCircle } from "react-icons/hi";
 import DatePicker from "react-datepicker";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-datepicker/dist/react-datepicker.css";
-import "../App.css";
+import "./css/home.css";
+
 import axios from 'axios';
 
 import format from "date-fns/format";
@@ -357,7 +359,7 @@ export default function HomePage() {
   return (
     <div>
       <nav className="navbar">
-        <a href="/" className="site-title">Coin Calendar</a>
+        <a href="/" className="site-title">Coin Calendar<a className="site-title-2">for visualizing your budget!</a></a>
         <ul>
           <div className="legend">
             <span className="legend-item orange-square"></span> Orange: Expenses
@@ -369,9 +371,64 @@ export default function HomePage() {
           <li><a href="/">Log Out</a></li>
         </ul>
       </nav>
-      <div className="App">
-        <h1><u>{username}'s Coin Calendar</u></h1>
+
+      <div className="Home">
+        <h1><u>{username}'s Coin Calendar</u>
+        
+        <HiOutlineQuestionMarkCircle  
+          className="hover-tooltip" 
+          title="Orange : Expenses
+           Blue : Events"/>
+        </h1> 
+          
         <div className="container">
+          <div className="calendar-container">
+            <Calendar
+              localizer={localizer}
+              events={allEvents}
+              startAccessor="start"
+              endAccessor="end"
+              style={{ height: 750 }}
+              onSelectEvent={handleEventClick}
+              eventPropGetter={eventStyleGetter}
+            />
+          </div>
+          
+          <div className="divBar"/>
+
+          <div className="rightside">
+            <div className="widget">
+              <h2>Monthly Budget</h2>
+              <p>Great job! You are still at $300 left</p>
+              <progress className="progress-bar" max="100" value={20} />
+              <table className="budget">
+                  <tr>
+                    <th>Money Spent</th>
+                    <th>Budget Remaining</th>
+                  </tr>
+                  <tr>
+                    <td className="spent">$500</td>
+                    <td className="remain">$3500</td>
+                  </tr>
+              </table>
+            </div>
+
+            {selectedEvent && (
+              <div className="event-details">
+                <h2>Details</h2>
+                <p>Title: {selectedEvent.title}</p>
+                <p>Start Date: {selectedEvent.start.toLocaleString()}</p>
+                <p>End Date: {selectedEvent.end.toLocaleString()}</p>
+                <p>Description: {selectedEvent.description}</p>
+                <p>Cost: {selectedEvent.spendingQuota}</p>
+                <button onClick={handleCloseEventDetails}>Close</button>
+                <button onClick={handleRemoveEvent}>Remove</button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div /*ADD EVENT */ className="eventContainer">
           <div className="add-event-container">
             <div className="add-event">
               <h2>Add Event</h2>
@@ -438,8 +495,8 @@ export default function HomePage() {
               <button onClick={handleAddEvent}>Add Event</button>
             </div>
           </div>
-          <div className="container">
-            <div /*ADD EXPENSE */ className="add-event-container">
+ 
+          <div /*ADD EXPENSE */ className="add-event-container">
               <div className="add-event">
                 <h2>Add Expense</h2>
                 <input
@@ -468,9 +525,19 @@ export default function HomePage() {
                 <button onClick={handleAddExpense}>Add Expense</button>
               </div>
             </div>
-          </div>
-          <div className="container">
-            <div className="add-event-container">
+
+            <div /*ADD DEPOSIT */ className="add-event-container">
+              <div className="add-event">
+                <h2>Add Deposit</h2>
+                <input
+                  type="text"
+                  placeholder="Amount"
+                />
+                <button onClick={handleNewBill}>Add Deposit</button>
+              </div>
+            </div>
+
+            <div /*ADD RECUR */ className="add-event-container">
               <div className="add-event">
                 <h2>Add Recurring Bill</h2>
                 <input
@@ -498,64 +565,25 @@ export default function HomePage() {
                   }
                 />
                 <button onClick={handleNewBill}>Add Bill</button>
-                <table>
-                  <thead>
-                    <tr>
-                      <th className="column">Name</th>
-                      <th className="column">Amount</th>
-                      <th className="column">Day</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {allBills.map((bill, index) => (
-                      <tr key={index}>
-                        <td className="entry">{bill.name}</td>
-                        <td className="entry">{bill.amount}</td>
-                        <td className="entry">{bill.day}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
             </div>
-          </div>
 
-          <div className="balance-section">
-            <h2>Balance: ${balance}</h2>
-            <input
-              type="number"
-              placeholder="Enter Balance"
-              value={updatedBalance}
-              onChange={(e) => setUpdatedBalance(parseInt(e.target.value))}
-            />
-            <button onClick={handleUpdateBalance}>Update Balance</button>
-            <h2>Expected Balance: ${expectedBalance}</h2>
-            <EventList events={allEvents} />
-          </div>
-          <div className="calendar-container">
-            <Calendar
-              localizer={localizer}
-              events={allEvents}
-              startAccessor="start"
-              endAccessor="end"
-              style={{ height: 500 }}
-              onSelectEvent={handleEventClick}
-              eventPropGetter={eventStyleGetter}
-            />
-          </div>
+            <div className="container">
+              <div className="balance-section">
+                <h2>Balance: ${balance}</h2>
+                <input
+                  type="number"
+                  placeholder="Enter Balance"
+                  value={updatedBalance}
+                  onChange={(e) => setUpdatedBalance(parseInt(e.target.value))}
+                />
+                <button onClick={handleUpdateBalance}>Update Balance</button>
+                <h2>Expected Balance: ${expectedBalance}</h2>
+                <EventList events={allEvents} />
+              </div>
+            </div>
+
         </div>
-        {selectedEvent && (
-          <div className="event-details">
-            <h2>Details</h2>
-            <p>Title: {selectedEvent.title}</p>
-            <p>Start Date: {selectedEvent.start.toLocaleString()}</p>
-            <p>End Date: {selectedEvent.end.toLocaleString()}</p>
-            <p>Description: {selectedEvent.description}</p>
-            <p>Cost: {selectedEvent.spendingQuota}</p>
-            <button onClick={handleCloseEventDetails}>Close</button>
-            <button onClick={handleRemoveEvent}>Remove</button>
-          </div>
-        )}
       </div>
     </div>
   );

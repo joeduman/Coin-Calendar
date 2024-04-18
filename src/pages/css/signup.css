@@ -9,9 +9,8 @@
     src: url("../../fonts/PaytoneOne-Regular.ttf");
 }
 
-.loginPage {
+.signupPage {
     font-size: 1.25em;
-    background: rgb(2,0,36);
     background: linear-gradient(22deg, rgba(2,0,36,1) 0%, rgba(0,133,255,1) 35%, rgba(0,212,255,1) 100%);
     height: 100vh;
     width: 100%;
@@ -20,11 +19,12 @@
     align-items: center;
 }
 
-.loginCover {
+.signupCover {
     background-color: white;
-    width: 25%;
-    height: 65%;
+    width: 30%;
+    height: 80%;
     position: relative;
+    margin-top: 1vw;
     border-radius: 2em;
     /* box-shadow: 0 0.188em 1.550em rgb(156, 156, 156); */
     display: flex;
@@ -36,34 +36,33 @@
     align-items: center;
 }
 
-.loginInput{
+.signupInput{
     border: none;
     background-color: rgb(229, 226, 226);
     width: 15rem;
     border-radius: 0.25em;
     text-align: center;
-    padding: 2em;
+    padding: 1em;
     font-size: 0.75em;
 }
 
-.loginPage .pagetitle{
-    font-size: 3.5vw;
-    color: white;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
-}
-
-.loginText{
+.signupText{
     border: none;
     width: 100%;
     text-align: left;
     padding: 0em;
     font-size: 1rem;
+}
+
+.signupPage .pagetitle{
+    font-size: 3.5vw;
+    color: white;
+    margin-top: -1rem;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
 }
 
 .pwtext{
@@ -74,11 +73,11 @@
     font-size: 1rem;
 }
 
-.loginInput:focus {
+.signupInput:focus {
     outline-color: rgb(182, 182, 182);
 }
 
-.loginBtn {
+.signupBtn {
     width: 100%; /* Take up the entire width of its parent */
     font-size: 20px;
     height: 4rem;
@@ -97,10 +96,10 @@
 
 
 
-.loginBtn:hover {
+.signupBtn:hover {
     background-color: rgb(27, 146, 211);
 }
 
-.loginBtn:active {
+.signupBtn:active {
     background-color: rgb(20, 114, 165);
 }

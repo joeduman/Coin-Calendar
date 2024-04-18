@@ -11,12 +11,33 @@
 }
 
 .site-title {
+    position: relative; /* Required for stacking order */
     font-size: 2rem;
+    color: white;
+    margin-left: 2rem;
+    z-index: 1; /* Ensure text is on top of background */
+}
+
+.site-title::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5rem; /* Adjust the width of the logo */
+    height: 5rem; /* Adjust the height of the logo */
     background-image: url('coin_calendar.png');
     background-repeat: no-repeat;
-    background-size: 5rem; /* Adjust the size of the image */
-    background-position: 35%;
-  }
+    background-size: contain; /* Adjust as needed */
+    z-index: 0; /* Ensure background is behind text */
+    margin-left: -3.75rem;
+}
+
+.site-title-2{
+    margin-top: 1rem;
+    margin-bottom: -0.5rem;
+    font-size: 1rem;
+    color: white;
+}
 
 .navbar ul {
     padding: 0;

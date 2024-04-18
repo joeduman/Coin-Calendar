@@ -1,0 +1,174 @@
+.Home {
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+.container {
+    margin-top: 1rem;
+    display: flex;
+}
+
+.widget {
+    border-radius: 15px;
+    background-color: #e6e6e6;
+    width: 25rem;
+    height: 15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2rem;
+    box-shadow: 0 0 10px rgba(58, 58, 58, 0.2); /* Add shadow */
+}
+
+.widget p{
+    margin-top: 50px;
+}
+
+h3{
+    margin-top: 1rem;
+}
+
+.rightside{
+    border-radius: 15px;
+    width: 25rem;
+    height: 15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2rem;
+}
+
+.budget {
+    border-spacing: 1rem; /* Adjust the spacing between rows */
+}
+
+.budget .spent{
+    color: red;
+}
+
+.budget .remain{
+    color: green;
+}
+
+.eventContainer {
+    background-color: #e6e6e6;
+    border-radius: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 0;
+    width: calc(60% - 4px);
+}
+
+.add-event-container {
+    background-color: #539ADB;
+    padding: 20px;
+    width: 220px;
+    border-radius: 50px;
+}
+
+.add-event {
+    color: white;
+}
+
+.hover-tooltip {
+    margin-left: 1rem;
+    font-size: 20px;
+    cursor: help; /* Changes the cursor to a question mark*/
+}
+
+.rbc-header{
+    background-color: #539ADB;
+    padding: 0.5rem;
+    font-size: 20px;
+}
+
+.rbc-allday-cell {
+    display: none;
+}
+
+/* Change color of navigation buttons */
+.rbc-btn-group .rbc-btn-primary {
+    background-color: #539ADB;
+    color: white;
+    border-color: #539ADB;
+}
+
+/* Increase font size of month text */
+.rbc-toolbar span {
+    font-size: 48px;
+}
+
+/* Change color of month/week/day buttons */
+.rbc-toolbar button {
+    background-color: #539ADB; 
+    color: white;
+    border-color: #539ADB;
+}
+
+/* Change color of today/back/next buttons on hover */
+.rbc-btn-group .rbc-btn-primary:hover,
+.rbc-toolbar button:hover {
+    background-color: #4078c0;
+    border-color: #4078c0;
+}
+
+.rbc-month-view .rbc-month-row .rbc-day-slot {
+    border-width: 2px;
+    border-color: black;
+}
+
+.rbc-time-view .rbc-timeslot-group {
+    border-width: 2px;
+    border-color: black;
+}
+
+.calendar-container {
+    /*
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    */
+    width: calc(60% - 4px);
+    margin-top: 1rem;
+    margin-right: 4px;
+} 
+
+.divBar{
+    display: flex;
+    background-color: #909090;
+    opacity: 50%;
+    border-radius: 100px;
+    width: 10px;
+    height: 40rem;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+.event-details {
+    margin-top: 8rem;
+    width: 25vw;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.date-pickers {
+    margin-bottom: 10px;
+}
+
+.date-pickers > * {
+    margin-right: 10px;
+}
+
+input[type="text"],
+button {
+    margin-right: 10px;
+}

@@ -12,6 +12,12 @@ const DashboardPage = () => {
     const [recurring, setRecurring] = useState([]);
     const [username, setUsername] = useState('');
 
+    const expenseDate = new Date(expense.date);
+    const month = expenseDate.getMonth() + 1;
+    const day = expenseDate.getDate();
+    const year = expenseDate.getFullYear();
+    const formattedExpenseDate = `${month < 10 ? '0' : ''}${month}/${day < 10 ? '0' : ''}${day}/${year}`;
+
     useEffect(() => {
       // Fetch username from local storage
       const storedUsername = localStorage.getItem('username');
@@ -54,10 +60,11 @@ const DashboardPage = () => {
     const handleBudgetChange = (e) => {
         setSelectedBudget(e.target.value);
     };
+
       return (
         <div>
         <nav className="navbar">
-        <a href="/" className="site-title">Coin Calendar</a>
+        <a href="/" className="site-title">Coin Calendar<a className="site-title-2">for visualizing your budget!</a></a>
         <ul>
             <li><Link to="/home">Home</Link></li>
             <li className="active"><Link to="/:username/dashboard">Dashboard</Link></li>
@@ -65,11 +72,12 @@ const DashboardPage = () => {
             <li><Link to="/">Log Out</Link></li>
         </ul>
         </nav>
+        <div className = "Dashboard">
         <h1>Account Dashboard</h1>
         <div class="dashcontainer">
             <div class="quadrant">
                 Budget Plan
-                <div>
+                <div className="budgetOptions">
                     <h1 className="budgetHead">Select Budget Plan</h1>
                     <h2 className="budgetLabel">Essentials/Spending/Saving</h2>
                     <select value={selectedBudget} onChange={handleBudgetChange}>
@@ -101,18 +109,25 @@ const DashboardPage = () => {
                 </div>
             </div>
             <div class="quadrant">Recent Transactions
-                <table className="table">
+            
+                <table className="quadrantTable">
                     <thead>
                         <tr>
-                            <th>expense name</th>
-                            <th>expense date</th>
+                            <th>Expense</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Cost</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {expense ? (
+                        {expense ? 
+                        
+                        (
                             <tr>
                                 <td>{expense.expenseName}</td>
-                                <td>{expense.date}</td>
+                                <td>{expense.category}</td>
+                                <td>{formattedExpenseDate}</td>
+                                <td>${expense.cost}</td>
                             </tr>
                         ) : (
                             <tr>
@@ -124,18 +139,22 @@ const DashboardPage = () => {
             </div>
 
             <div class="quadrant">Recurring Bills
-                <table className="table">
+                <table className="quadrantTable">
                     <thead>
                         <tr>
-                            <th>recur name</th>
-                            <th>renew date</th>
+                            <th>Bill</th>
+                            <th>Freq</th>
+                            <th>Renewal Date</th>
+                            <th>Cost</th>
                         </tr>
                     </thead>
                     <tbody>
                         {recurring ? (
                             <tr>
                                 <td>{recurring.billName}</td>
+                                <td>{recurring.frequency}</td>
                                 <td>{recurring.renewDay}</td>
+                                <td>${recurring.cost}</td>
                             </tr>
                         ) : (
                             <tr>
@@ -149,11 +168,13 @@ const DashboardPage = () => {
             </div>
             
             <div class="quadrant">All Upcoming Events
-            <table className="table">
+            <table className="quadrantTable">
                     <thead>
                         <tr>
-                            <th>event name</th>
-                            <th>event description</th>
+                            <th>Event</th>
+                            <th>desc</th>
+                            <th>Start</th>
+                            <th>End</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -161,6 +182,8 @@ const DashboardPage = () => {
                             <tr>
                                 <td>{event.eventName}</td>
                                 <td>{event.description}</td>
+                                <td>{event.datespan_start}</td>
+                                <td>{event.datespan_end}</td>
                             </tr>
                         ) : (
                             <tr>
@@ -171,6 +194,7 @@ const DashboardPage = () => {
                 </table>
             
             </div>
+        </div>
         </div>
         </div>
       );

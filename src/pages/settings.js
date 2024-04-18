@@ -9,7 +9,7 @@ export default function SettingsPage() {
     return (
         <div>
             <nav className="navbar">
-                <a href="/" className="site-title">Coin Calendar</a>
+                <a href="/" className="site-title">Coin Calendar <a className="site-title-2">for visualizing your budget!</a></a>
                 <ul>
                     <li><Link to="/home">Home</Link></li>
                     <li><Link to="/:username/dashboard">Dashboard</Link></li>
@@ -17,6 +17,7 @@ export default function SettingsPage() {
                     <li><Link to="/">Log Out</Link></li>
                 </ul>
             </nav>
+            <div className="Settings">
             <h1>Account Settings</h1>
             <div>
                 <form className="settingscontainer">
@@ -33,6 +34,7 @@ export default function SettingsPage() {
                         <button className="delAccount">Delete Account</button> 
                     </div>
                 </form>
+            </div>
             </div>
 
 

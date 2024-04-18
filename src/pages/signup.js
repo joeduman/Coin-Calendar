@@ -1,13 +1,13 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import HomePage from "./home";
 import { CgProfile } from "react-icons/cg";
 import { FaRegUser } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
-import './css/login.css'
-import { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import {BrowserRouter, Routes, Route, Link} from 'react-router-dom';
 import axios from 'axios';
+import './css/signup.css';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -63,26 +63,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="page">
-      <div className="cover">
+    <div className="signupPage">
+      <h1 className="pagetitle">Coin Calendar</h1>
+      <div className="signupCover">
         <h1>Sign Up</h1>
-        <p className="logintitle">Username</p>
-        <input className="logininput" type="text" placeholder="Type your username" value={username} onChange={(e) => setUsername(e.target.value)} />
-        <p className="logintitle">Password</p>
-        <input className="logininput" type="password" placeholder="Type your password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <p className="logintitle">Confirm Password</p>
-        <input className="logininput" type="password" placeholder="Retype your password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-        <p className="logintitle">First Name</p>
-        <input className="logininput" type="text" placeholder="Type your first name" value={fname} onChange={(e) => setFName(e.target.value)} />
-        <p className="logintitle">Last Name</p>
-        <input className="logininput" type="text" placeholder="Type your last name" value={lname} onChange={(e) => setLName(e.target.value)} />
-        <p className="logintitle">Email</p>
-        <input className="logininput" type="email" placeholder="example@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <p className="logintitle">Phone Number</p>
-        <input className="logininput" type="tel" placeholder="XXX-XXX-XXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        <div className="login-btn" onClick={handleSignUp}>Sign Up</div>
+        <form onSubmit={handleSignUp}>
+          <p className="signupText">Username</p>
+          <input className="signupInput" type="text" placeholder="Type your username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <p className="signupText">Password</p>
+          <input className="signupInput" type="password" placeholder="Type your password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <p className="signupText">Confirm Password</p>
+          <input className="signupInput" type="password" placeholder="Retype your password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          <p className="signupText">First Name</p>
+          <input className="signupInput" type="text" placeholder="Type your first name" value={fname} onChange={(e) => setFName(e.target.value)} />
+          <p className="signupText">Last Name</p>
+          <input className="signupInput" type="text" placeholder="Type your last name" value={lname} onChange={(e) => setLName(e.target.value)} />
+          <p className="signupText">Email</p>
+          <input className="signupInput" type="email" placeholder="example@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <p className="signupText">Phone Number</p>
+          <input className="signupInput" type="tel" placeholder="XXX-XXX-XXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        <button type="submit" className="signupBtn">Sign Up</button>
+        </form>
         <p className="logintext">Already Have an Account? <a href="/">Login</a> </p>
-        <a href="home" className="logintext">Go to home page (DEVTOOL)</a>
       </div>
     </div>
   );
