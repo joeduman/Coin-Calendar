@@ -11,6 +11,7 @@ const DashboardPage = () => {
     const [event, setEvents] = useState([]);
     const [recurring, setRecurring] = useState([]);
     const [username, setUsername] = useState('');
+    const [balance, setBalance] = useState(0)
 
     const expenseDate = new Date(expense.date);
     const month = expenseDate.getMonth() + 1;
@@ -22,6 +23,11 @@ const DashboardPage = () => {
       // Fetch username from local storage
       const storedUsername = localStorage.getItem('username');
       setUsername(storedUsername);
+    }, []);
+
+    useEffect(() => {
+        const storedBalance = localStorage.getItem('balance');
+        setBalance(storedBalance);
     }, []);
     
     useEffect(() => {
@@ -90,7 +96,13 @@ const DashboardPage = () => {
                     <h1 className="budgetdesc">50 / 30 / 20 Split</h1>
                     <p className="budgetdesc">The 50/30/20 budgeting plan is a general rule of thumb perfect for those new to budgeting. It allocates
                         50% of income to essentials like rent, food, bills, etc., 30% to a spending budget for any personal desires
-                        or outings, and 20% to savings for the future or investments.</p>
+                        or outings, and 20% to savings for the future or investments.
+                    </p>
+                    <br />
+                        <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
+                        <p className="budgetdesc">Essentials (50%) - ${balance * 0.5}</p>
+                        <p className="budgetdesc">Spending (30%) - ${balance * 0.3}</p>
+                        <p className="budgetdesc">Savings (20%) - ${balance * 0.2}</p>
                     </div>}
                     {selectedBudget === 'Option 3' && <div>
                     <h1 className="budgetdesc">60 / 10 / 30 Split</h1>
@@ -98,6 +110,11 @@ const DashboardPage = () => {
                         personal spending. It is useful for those with higher costs of living as well as those who tend to be more frugal
                         with their non-essential spending, as it only allocates 10% of income to 'wants'. 
                     </p>
+                    <br />
+                        <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
+                        <p className="budgetdesc">Essentials (60%) - ${balance * 0.6}</p>
+                        <p className="budgetdesc">Spending (10%) - ${balance * 0.1}</p>
+                        <p className="budgetdesc">Savings (30%) - ${balance * 0.3}</p>
                     </div>}
                     {selectedBudget === 'Option 4' && <div>
                     <h1 className="budgetdesc">40 / 50 / 10 Split</h1>
@@ -105,6 +122,11 @@ const DashboardPage = () => {
                         It draws a few extra funds from both savings and essentials to allocate to personal spending. This is potentially useful
                     to those with multiple sources of income or an excess of funds in general. 
                     </p>
+                    <br />
+                        <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
+                        <p className="budgetdesc">Essentials (40%) - ${balance * 0.4}</p>
+                        <p className="budgetdesc">Spending (50%) - ${balance * 0.5}</p>
+                        <p className="budgetdesc">Savings (10%) - ${balance * 0.1}</p>
                 </div>}
                 </div>
             </div>
