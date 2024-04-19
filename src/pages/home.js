@@ -474,8 +474,8 @@ export default function HomePage() {
                       selected={newEvent.start}
                       showTimeSelect
                       showTimeSelectOnly
-                      timeIntervals={30}
-                      dateFormat="hh:mm:ss"
+                      timeIntervals={15}
+                      dateFormat="h:mm"
                       onChange={(start) => setNewEvent({ ...newEvent, start })}
                     />
                     <DatePicker
@@ -483,8 +483,8 @@ export default function HomePage() {
                       selected={newEvent.end}
                       showTimeSelect
                       showTimeSelectOnly
-                      timeIntervals={30}
-                      dateFormat="hh:mm:ss"
+                      timeIntervals={15}
+                      dateFormat="h:mm"
                       onChange={(end) => setNewEvent({ ...newEvent, end })}
                     />
                   </>
