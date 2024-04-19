@@ -118,6 +118,21 @@ export default function HomePage() {
     setExpectedBalance(balance - totalCost);
   }, [balance, allExpenses]);
 
+  function formatDateSQL(date) {
+    // Extract the year, month, day, hours, minutes, and seconds from the date object
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so add 1 and pad to 2 digits
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    // Combine the date and time components into the desired format
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDate;
+  }
+
 
   async function handleAddEvent() {
     if (!newEvent.title || !newEvent.start || !newEvent.end || !newEvent.description) {
@@ -132,8 +147,8 @@ export default function HomePage() {
         eventName: newEvent.title,
         description: newEvent.description,
         repeat: false,
-        datespan_start: `${new Date(newEvent.start).toISOString().replace('T', ' ').replace('.000Z', '')}`,
-        datespan_end: `${new Date(newEvent.end).toISOString().replace('T', ' ').replace('.000Z', '')}`,
+        datespan_start: `${formatDateSQL(new Date(String(newEvent.start)))}`,
+        datespan_end: `${formatDateSQL(new Date(String(newEvent.end)))}`,
       });
 
       // Add the event to the list of events and update the state
@@ -375,13 +390,13 @@ export default function HomePage() {
 
       <div className="Home">
         <h1><u>{username}'s Coin Calendar</u>
-        
-        <HiOutlineQuestionMarkCircle  
-          className="hover-tooltip" 
-          title="Orange : Expenses
+
+          <HiOutlineQuestionMarkCircle
+            className="hover-tooltip"
+            title="Orange : Expenses
            Blue : Events"/>
-        </h1> 
-          
+        </h1>
+
         <div className="container">
           <div className="calendar-container">
             <Calendar
@@ -394,8 +409,8 @@ export default function HomePage() {
               eventPropGetter={eventStyleGetter}
             />
           </div>
-          
-          <div className="divBar"/>
+
+          <div className="divBar" />
 
           <div className="rightside">
             <div className="widget">
@@ -403,14 +418,14 @@ export default function HomePage() {
               <p>Great job! You are still at $300 left</p>
               <progress className="progress-bar" max="100" value={20} />
               <table className="budget">
-                  <tr>
-                    <th>Money Spent</th>
-                    <th>Budget Remaining</th>
-                  </tr>
-                  <tr>
-                    <td className="spent">$500</td>
-                    <td className="remain">$3500</td>
-                  </tr>
+                <tr>
+                  <th>Money Spent</th>
+                  <th>Budget Remaining</th>
+                </tr>
+                <tr>
+                  <td className="spent">$500</td>
+                  <td className="remain">$3500</td>
+                </tr>
               </table>
             </div>
 
@@ -496,93 +511,93 @@ export default function HomePage() {
               <button onClick={handleAddEvent}>Add Event</button>
             </div>
           </div>
- 
+
           <div /*ADD EXPENSE */ className="add-event-container">
-              <div className="add-event">
-                <h2>Add Expense</h2>
-                <input
-                  type="text"
-                  placeholder="Expense Name"
-                  value={newExpense.name}
-                  onChange={(e) => setNewExpense({ ...newExpense, name: e.target.value })}
-                />
-                <input
-                  type="text"
-                  placeholder="Category"
-                  value={newExpense.category}
-                  onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
-                />
-                <DatePicker
-                  placeholderText="Date"
-                  selected={newExpense.date}
-                  onChange={(date) => setNewExpense({ ...newExpense, date })}
-                />
-                <input
-                  type="number"
-                  placeholder="Cost"
-                  value={newExpense.cost}
-                  onChange={(e) => setNewExpense({ ...newExpense, cost: e.target.value })}
-                />
-                <button onClick={handleAddExpense}>Add Expense</button>
-              </div>
+            <div className="add-event">
+              <h2>Add Expense</h2>
+              <input
+                type="text"
+                placeholder="Expense Name"
+                value={newExpense.name}
+                onChange={(e) => setNewExpense({ ...newExpense, name: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Category"
+                value={newExpense.category}
+                onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
+              />
+              <DatePicker
+                placeholderText="Date"
+                selected={newExpense.date}
+                onChange={(date) => setNewExpense({ ...newExpense, date })}
+              />
+              <input
+                type="number"
+                placeholder="Cost"
+                value={newExpense.cost}
+                onChange={(e) => setNewExpense({ ...newExpense, cost: e.target.value })}
+              />
+              <button onClick={handleAddExpense}>Add Expense</button>
             </div>
+          </div>
 
-            <div /*ADD DEPOSIT */ className="add-event-container">
-              <div className="add-event">
-                <h2>Add Deposit</h2>
-                <input
-                  type="text"
-                  placeholder="Amount"
-                />
-                <button onClick={handleNewBill}>Add Deposit</button>
-              </div>
+          <div /*ADD DEPOSIT */ className="add-event-container">
+            <div className="add-event">
+              <h2>Add Deposit</h2>
+              <input
+                type="text"
+                placeholder="Amount"
+              />
+              <button onClick={handleNewBill}>Add Deposit</button>
             </div>
+          </div>
 
-            <div /*ADD RECUR */ className="add-event-container">
-              <div className="add-event">
-                <h2>Add Recurring Bill</h2>
-                <input
-                  type="text"
-                  placeholder="Bill Name"
-                  value={newBill.name}
-                  onChange={(e) =>
-                    setNewBill({ ...newBill, name: e.target.value })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Amount"
-                  value={newBill.amount}
-                  onChange={(e) =>
-                    setNewBill({ ...newBill, amount: e.target.value })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Day"
-                  value={newBill.day}
-                  onChange={(e) =>
-                    setNewBill({ ...newBill, day: e.target.value })
-                  }
-                />
-                <button onClick={handleNewBill}>Add Bill</button>
-              </div>
+          <div /*ADD RECUR */ className="add-event-container">
+            <div className="add-event">
+              <h2>Add Recurring Bill</h2>
+              <input
+                type="text"
+                placeholder="Bill Name"
+                value={newBill.name}
+                onChange={(e) =>
+                  setNewBill({ ...newBill, name: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Amount"
+                value={newBill.amount}
+                onChange={(e) =>
+                  setNewBill({ ...newBill, amount: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Day"
+                value={newBill.day}
+                onChange={(e) =>
+                  setNewBill({ ...newBill, day: e.target.value })
+                }
+              />
+              <button onClick={handleNewBill}>Add Bill</button>
             </div>
+          </div>
 
-            <div className="container">
-              <div className="balance-section">
-                <h2>Balance: ${balance}</h2>
-                <input
-                  type="number"
-                  placeholder="Enter Balance"
-                  value={updatedBalance}
-                  onChange={(e) => setUpdatedBalance(parseInt(e.target.value))}
-                />
-                <button onClick={handleUpdateBalance}>Update Balance</button>
-                <h2>Expected Balance: ${expectedBalance}</h2>
-                <EventList events={allEvents} />
-              </div>
+          <div className="container">
+            <div className="balance-section">
+              <h2>Balance: ${balance}</h2>
+              <input
+                type="number"
+                placeholder="Enter Balance"
+                value={updatedBalance}
+                onChange={(e) => setUpdatedBalance(parseInt(e.target.value))}
+              />
+              <button onClick={handleUpdateBalance}>Update Balance</button>
+              <h2>Expected Balance: ${expectedBalance}</h2>
+              <EventList events={allEvents} />
             </div>
+          </div>
 
         </div>
       </div>
