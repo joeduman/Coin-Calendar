@@ -1,12 +1,17 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+const generator = require('generate-password');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 
 const pool = mysql.createPool({
   host: 'localhost', // Remove port number
@@ -15,40 +20,73 @@ const pool = mysql.createPool({
   database: 'coincalendar'
 });
 /////// SIGN UP
-app.post('/signup', (req, res) => {
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_ADDRESS,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+app.post('/signup', async (req, res) => {
   const { username, password, fname, lname, email, phone } = req.body;
 
-  // Query the last inserted accountID
-  pool.query('SELECT MAX(accountID) AS maxAccountID FROM Account', (error, results) => {
-    if (error) {
-      console.error('Error fetching max accountID:', error);
-      res.status(500).json({ error: 'Error signing up. Please try again.' });
-      return;
+  // Check if the username already exists
+  const checkUsernameQuery = `SELECT * FROM Account WHERE username = ?`;
+  pool.query(checkUsernameQuery, [username], async (checkError, checkResults) => {
+    if (checkError) {
+      console.error('Error checking username:', checkError);
+      return res.status(500).json({ error: 'Error signing up. Please try again.' });
     }
 
-    // Calculate the next available accountID
-    const nextAccountID = results[0].maxAccountID ? results[0].maxAccountID + 1 : 1;
+    // If username already exists, return error
+    if (checkResults.length > 0) {
+      return res.status(400).json({ error: 'Username already exists' });
+    }
 
-    const newUser = {
-      accountID: nextAccountID,
-      username,
-      password,
-      fname,
-      lname,
-      email,
-      phone
-    };
+    // Query the last inserted accountID
+    pool.query('SELECT MAX(accountID) AS maxAccountID FROM Account', async (error, results) => {
+      if (error) {
+        console.error('Error fetching max accountID:', error);
+        return res.status(500).json({ error: 'Error signing up. Please try again.' });
+      }
 
-    pool.query('INSERT INTO Account SET ?', newUser, (insertError, insertResults) => {
-      if (insertError) {
+      // Calculate the next available accountID
+      const nextAccountID = results[0].maxAccountID ? results[0].maxAccountID + 1 : 1;
+
+      const newUser = {
+        accountID: nextAccountID,
+        username,
+        password,
+        fname,
+        lname,
+        email,
+        phone
+      };
+
+      try {
+        // Insert user data into the database
+        await pool.query('INSERT INTO Account SET ?', newUser);
+
+        // Send welcome email
+        const mailOptions = {
+          from: `"The Coin Calendar" <${process.env.EMAIL_ADDRESS}>`,
+          to: email,
+          subject: 'Welcome to Coin Calendar',
+          text: `Hi ${username},\n\nThank you for signing up!\n\nBest regards,\nThe Coin Calendar Team`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(201).json({ message: 'Sign up successful', accountID: nextAccountID });
+      } catch (insertError) {
         console.error('Error signing up:', insertError);
         res.status(500).json({ error: 'Error signing up. Please try again.' });
-        return;
       }
-      res.status(201).json({ message: 'Sign up successful', accountID: nextAccountID });
     });
   });
 });
+
 
 /////LOGIN
 app.post('/login', (req, res) => {
@@ -70,6 +108,116 @@ app.post('/login', (req, res) => {
     }
   });
 });
+
+
+///////RESET PASSWORD
+app.post('/resetpassword', async (req, res) => {
+  const { username, email } = req.body;
+
+  // Check username and email in database
+  const query = `SELECT * FROM Account WHERE username = '${username}' AND email = '${email}'`;
+  pool.query(query, async (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    // Check if user exists in database
+    if (results.length > 0) {
+      try {
+        // Generate a new code
+        var code = generator.generate({
+          length: 10,
+          numbers: true
+        });
+
+        // Delete existing entries for the user from resetpassword table
+        // const deleteQuery = 'DELETE FROM resetpassword WHERE username = ?';
+        // await pool.query(deleteQuery, [username]);
+
+        // Insert new entry for the user into resetpassword table
+        const insertQuery = 'INSERT INTO resetpassword (username, code) VALUES (?, ?)';
+        await pool.query(insertQuery, [username, code]);
+
+        // Send password reset email
+        const mailOptions = {
+          from: `"The Coin Calendar" <${process.env.EMAIL_ADDRESS}>`,
+          to: email,
+          subject: 'Reset Your Password',
+          text: `Hi ${username},\n\nHere is the code you can use to create a new password: ${code}\n\nBest regards,\nThe Coin Calendar Team`
+        };
+
+        await transporter.sendMail(mailOptions);
+        return res.json({ success: true });
+      } catch (error) {
+        console.error('Error sending email:', error);
+        return res.status(500).json({ success: false, error: 'Error sending reset password email' });
+      }
+    } else {
+      // User not found
+      return res.status(401).json({ success: false, error: 'Invalid username or email' });
+    }
+  });
+});
+
+
+//////GATEWAY CHECK CODE
+app.post('/code', async (req, res) => {
+  const { username, code } = req.body;
+
+  // Query the resetpassword table to check if the username and code match
+  const query = `SELECT * FROM resetpassword WHERE username = ? AND code = ?`;
+  pool.query(query, [username, code], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    // If a matching entry is found, delete the code and return success
+    if (results.length > 0) {
+      // Delete the code from the resetpassword table
+      pool.query('DELETE FROM resetpassword WHERE code = ?', [code], (deleteErr, deleteResults) => {
+        if (deleteErr) {
+          console.error('Error deleting code:', deleteErr);
+          return res.status(500).json({ success: false, error: 'Failed to delete code' });
+        }
+
+        // Send success response
+        return res.json({ success: true });
+      });
+    } else {
+      // If no matching entry is found, return error
+      return res.status(401).json({ success: false, error: 'Invalid username or code' });
+    }
+  });
+});
+
+
+
+//////CHANGE PASSWORD
+app.post('/changepass', (req, res) => {
+  const { username, newPassword } = req.body;
+
+  // Update the password for the given username in the database
+  const updateQuery = 'UPDATE Account SET password = ? WHERE username = ?';
+  pool.query(updateQuery, [newPassword, username], (error, results) => {
+    if (error) {
+      console.error('Error updating password:', error);
+      // Send an error response
+      return res.status(500).json({ success: false, error: 'Error updating password. Please try again.' });
+    }
+
+    // Check if any rows were affected by the update
+    if (results.affectedRows > 0) {
+      // Send a success response
+      return res.json({ success: true, message: 'Password updated successfully' });
+    } else {
+      // If no rows were affected, it means the username was not found
+      return res.status(404).json({ success: false, error: 'Username not found' });
+    }
+  });
+});
+
 
 app.get("/expenses/:username", (req, res) => {
   const username = req.params.username; // Use the parameter passed in the URL
@@ -159,17 +307,17 @@ app.get('/api/users/accountID', (req, res) => {
 
   // Query to find the account ID from the account table using the provided username
   pool.query('SELECT accountID FROM Account WHERE username = ?', [username], (error, results) => {
-      if (error) {
-          console.error('Error fetching accountID:', error);
-          return res.status(500).json({ error: 'Internal server error' });
-      }
+    if (error) {
+      console.error('Error fetching accountID:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
 
-      if (results.length > 0) {
-          const accountID = results[0].accountID;
-          res.json({ accountID });
-      } else {
-          res.status(404).json({ error: 'Username not found' });
-      }
+    if (results.length > 0) {
+      const accountID = results[0].accountID;
+      res.json({ accountID });
+    } else {
+      res.status(404).json({ error: 'Username not found' });
+    }
   });
 });
 
@@ -204,8 +352,8 @@ app.post('/api/events', (req, res) => {
     accountID,
     eventName,
     description,
-    repeat, 
-    datespan_start, 
+    repeat,
+    datespan_start,
     datespan_end
   };
   // Insert the expense into the Event table
@@ -264,6 +412,12 @@ app.delete('/remove/expenses/:id', (req, res) => {
   });
 });
 
+
+
+
+
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
