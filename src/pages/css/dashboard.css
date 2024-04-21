@@ -50,7 +50,7 @@
 }
 
 .budgetHead {
-    color: white;
+    color: black;
     font-size: 26px;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .budgetdesc {
-    color: white;
+    color: gray;
     font-size: 18px;
 }
 
@@ -74,11 +74,14 @@
 
 .quadrantTable th {
     padding-top: 1rem;
+    font-size: 20px;
     text-align: center;
+    text-decoration: underline;
 }
 
 .quadrantTable td {
     text-align: center;
-    color: black;
+    color: rgb(0, 0, 0);
+    overflow-y: auto;
 }
   
