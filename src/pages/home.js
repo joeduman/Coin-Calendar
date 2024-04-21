@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi";
+import { Link } from 'react-router-dom';
 import DatePicker from "react-datepicker";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -90,7 +91,7 @@ export default function HomePage() {
   useEffect(() => {
     if (username) {
       const fetchAccountID = async () => {
-        try {
+        try { 
           const response = await fetch(`http://localhost:5000/api/users/accountID?username=${username}`);
           if (response.ok) {
             const data = await response.json();
@@ -135,6 +136,10 @@ export default function HomePage() {
 
 
   async function handleAddEvent() {
+    if ((String(newEvent.name).length || String(newEvent.description).length) > 12) {
+      alert("Event details must be less than 12 characters!");
+      return;
+    }
     if (!newEvent.title || !newEvent.start || !newEvent.end || !newEvent.description) {
       alert("Please fill out all the fields.");
       return;
@@ -182,11 +187,21 @@ export default function HomePage() {
         },
       };
     }
-    return {}; // Default style for regular events
+    else {
+      return {
+        style: {
+          backgroundColor: '#4078c0',
+        },
+      };
+    }
   }
 
 
   async function handleAddExpense() {
+    if ((String(newExpense.name).length || String(newExpense.category).length) > 12) {
+      alert("Expense details must be less than 12 characters!");
+      return;
+    }
     if (!newExpense.name || !newExpense.category || !newExpense.date || !newExpense.cost) {
       alert("Please fill out all the fields.");
       return;
@@ -381,10 +396,11 @@ export default function HomePage() {
             <span className="legend-item orange-square"></span> Orange: Expenses
             <span className="legend-item blue-square"></span> Blue: Events
           </div>
-          <li className="active"><a href="/home">Home</a></li>
-          <li><a href="/:username/dashboard">Dashboard</a></li>
-          <li><a href="/:username/settings">Settings</a></li>
-          <li><a href="/">Log Out</a></li>
+
+          <li className="active"><Link to="/home">Home</Link></li>
+          <li><Link to="/:username/dashboard">Dashboard</Link></li>
+          <li><Link to="/:username/settings">Settings</Link></li>
+          <li><Link to="/">Log Out</Link></li>
         </ul>
       </nav>
 
@@ -415,16 +431,16 @@ export default function HomePage() {
           <div className="rightside">
             <div className="widget">
               <h2>Monthly Budget</h2>
-              <p>Great job! You are still at $300 left</p>
-              <progress className="progress-bar" max="100" value={20} />
+              <p>You still have ${expectedBalance} left</p>
+              <progress className="progress-bar" max={balance} value={balance - expectedBalance} />
               <table className="budget">
                 <tr>
                   <th>Money Spent</th>
                   <th>Budget Remaining</th>
                 </tr>
                 <tr>
-                  <td className="spent">$500</td>
-                  <td className="remain">$3500</td>
+                  <td className="spent">${(balance - expectedBalance)}</td>
+                  <td className="remain">${expectedBalance}</td>
                 </tr>
               </table>
             </div>
@@ -475,7 +491,7 @@ export default function HomePage() {
                       showTimeSelect
                       showTimeSelectOnly
                       timeIntervals={15}
-                      dateFormat="h:mm"
+                      dateFormat="h:mm a"
                       onChange={(start) => setNewEvent({ ...newEvent, start })}
                     />
                     <DatePicker
@@ -484,7 +500,7 @@ export default function HomePage() {
                       showTimeSelect
                       showTimeSelectOnly
                       timeIntervals={15}
-                      dateFormat="h:mm"
+                      dateFormat="h:mm a"
                       onChange={(end) => setNewEvent({ ...newEvent, end })}
                     />
                   </>
