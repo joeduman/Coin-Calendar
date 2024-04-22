@@ -43,7 +43,7 @@ export default function LoginPage() {
                     <input className="loginInput" type="text" placeholder="Type your username" value={username} onChange={(e) => setUsername(e.target.value)} />
                     <p className="loginText">Password</p>
                     <input className="loginInput" type="password" placeholder="Type your password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <p className="pwtext">Forgot Password?</p>
+                    <p><Link to="/forgotpassword">Forgot Password?</Link></p>
                     {error && <p className="error">{error}</p>}
                     <button type="submit" className="loginBtn">LOGIN</button>
                 </form>
