@@ -415,6 +415,163 @@ app.delete('/remove/expenses/:id', (req, res) => {
 });
 
 
+//////////DELETE ACCOUNT
+app.delete('/deleteaccount/:username', (req, res) => {
+  const { username } = req.params;
+
+  // First, find the user's accountID
+  pool.query('SELECT accountID FROM Account WHERE username = ?', [username], (err, userResults) => {
+    if (err) {
+      console.error('Error finding user:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    const accountId = userResults[0].accountID;
+
+    // Define functions to delete expenses, events, and recurring bills
+    const deleteExpenses = () => {
+      pool.query('DELETE FROM Expense WHERE accountID = ?', [accountId], (err, expenseResults) => {
+        if (err) {
+          console.error('Error deleting expenses:', err);
+          return res.status(500).json({ success: false, error: 'Failed to delete expenses' });
+        }
+        deleteEvents();
+      });
+    };
+
+    const deleteEvents = () => {
+      pool.query('DELETE FROM Event WHERE accountID = ?', [accountId], (err, eventResults) => {
+        if (err) {
+          console.error('Error deleting events:', err);
+          return res.status(500).json({ success: false, error: 'Failed to delete events' });
+        }
+        deleteRecurringBills();
+      });
+    };
+
+    const deleteRecurringBills = () => {
+      pool.query('DELETE FROM `Recurring-Bill` WHERE accountID = ?', [accountId], (err, recurringBillResults) => {
+        if (err) {
+          console.error('Error deleting recurring bills:', err);
+          return res.status(500).json({ success: false, error: 'Failed to delete recurring bills' });
+        }
+        deleteUser();
+      });
+    };
+
+    const deleteUser = () => {
+      // Finally, delete the user
+      pool.query('DELETE FROM Account WHERE username = ?', [username], (err, userDeleteResult) => {
+        if (err) {
+          console.error('Error deleting user:', err);
+          return res.status(500).json({ success: false, error: 'Failed to delete user' });
+        }
+
+        if (userDeleteResult.affectedRows > 0) {
+          return res.status(200).json({ success: true, message: 'User account and associated data deleted successfully' });
+        } else {
+          return res.status(404).json({ success: false, error: 'User not found' });
+        }
+      });
+    };
+
+    // Check if the user has expenses, events, and recurring bills
+    if (userResults.length > 0) {
+      deleteExpenses();
+    } else {
+      deleteUser();
+    }
+  });
+});
+
+////////UPDATE USER INFORMATION FROM SETTINGS 
+app.put('/userupdate/:username', (req, res) => {
+  const { username } = req.params;
+  const { fname, lname, email, phone, password, newpassword } = req.body;
+
+  console.log(newpassword);
+  // Assuming you have a database connection pool named 'pool'
+
+  // First, check if the user exists
+  pool.query('SELECT * FROM Account WHERE username = ?', [username], (err, userResults) => {
+    if (err) {
+      console.error('Error fetching user:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    const user = userResults[0];
+
+    // If the provided password doesn't match the user's current password, return an error
+    if (password !== user.password) {
+      return res.status(400).json({ success: false, error: 'Incorrect password' });
+    }
+
+    // Construct the update query based on which fields are provided in the request
+    const updateFields = [];
+    const updateValues = [];
+
+    if (fname) {
+      updateFields.push('fname = ?');
+      updateValues.push(fname);
+    }
+
+    if (lname) {
+      updateFields.push('lname = ?');
+      updateValues.push(lname);
+    }
+
+    if (email) {
+      updateFields.push('email = ?');
+      updateValues.push(email);
+    }
+
+    if (phone) {
+      updateFields.push('phone = ?');
+      updateValues.push(phone);
+    }
+
+    // Check if newpassword is provided and not null
+    if (newpassword != undefined) {
+      updateFields.push('password = ?');
+      updateValues.push(newpassword);
+    }
+
+    if (updateFields.length === 0) {
+      return res.status(400).json({ success: false, error: 'No fields provided for update' });
+    }
+
+    // Add username to the update values array
+    updateValues.push(username);
+
+    // Update the user in the database
+    const updateQuery = `UPDATE Account SET ${updateFields.join(', ')} WHERE username = ?`;
+
+    pool.query(updateQuery, updateValues, (err, updateResult) => {
+      if (err) {
+        console.error('Error updating user:', err);
+        return res.status(500).json({ success: false, error: 'Failed to update user' });
+      }
+
+      if (updateResult.affectedRows > 0) {
+        return res.status(200).json({ success: true, message: 'User updated successfully' });
+      } else {
+        return res.status(500).json({ success: false, error: 'Failed to update user' });
+      }
+    });
+  });
+});
+
+
+
+
 
 
 
@@ -422,4 +579,3 @@ app.delete('/remove/expenses/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
