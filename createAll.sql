@@ -49,6 +49,11 @@ CREATE TABLE IF NOT EXISTS `Budget-Info` (
   `frequency` ENUM('weekly', 'monthly', 'yearly') -- choice between a weekly, monthly, and yearly budget plan option
 );
 
+CREATE TABLE IF NOT EXISTS `resetpassword` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(30) NOT NULL,
+  `code` TEXT NOT NULL
+);
 
 -- simple entry for a user into the database
 INSERT INTO `Account` (`username`, `password`, `fname`, `lname`, `email`, `phone`)
