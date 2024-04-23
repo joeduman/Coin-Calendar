@@ -291,13 +291,15 @@ app.get("/recurring/:username", (req, res) => {
   });
 });
 
-app.get("/details/:username", (req, res) => {
+app.get("/userinfo/:username", (req, res) => {
   const username = req.params.username; // Use the parameter passed in the URL
   const query = `SELECT * FROM Account WHERE username = '${username}'`;
   pool.query(query, (err, results) => {
     if (err) {
       console.error('Error executing query:', err);
       return res.status(500).json({ success: false, error: 'Internal server error' });
+    } else {
+      res.send(results); // Corrected variable name
     }
   });
 });

@@ -66,6 +66,10 @@
     background-color: #0056b3;
 }
 
+.form-group .delAccount:hover {
+    background-color: #6d0e0e;
+}
+
 .form-group a {
     text-decoration: none;
     margin-right: 3rem;
