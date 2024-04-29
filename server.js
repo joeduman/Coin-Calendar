@@ -304,6 +304,19 @@ app.get("/userinfo/:username", (req, res) => {
   });
 });
 
+//prob can be removed, tried to work around the accountID func below for signup but didnt give me
+// app.get('/api/getAccountID', (req, res) => {
+//   const query = `SELECT accountID FROM Account WHERE username = '${username}'`;
+//   pool.query(query, (err, results) => {
+//     if (err) {
+//       console.error('Error executing query:', err);
+//       return res.status(500).json({ success: false, error: 'Internal server error' });
+//     }else {
+//       res.send(results); // Corrected variable name
+//     }
+//   });
+// });
+
 app.get('/api/users/accountID', (req, res) => {
   const { username } = req.query;
 
@@ -345,6 +358,56 @@ app.post('/api/expenses', (req, res) => {
     res.status(201).json({ success: true, message: 'Expense added successfully', expense: newExpense });
   });
 });
+
+////////ADD RECURRING-BILL
+app.post('/api/recurring', (req, res) => {
+  const { accountID, billName, renewDay, frequency, category, cost } = req.body;
+  // Create a recurring-bill object to insert into the database
+  const newRecurring = {
+    accountID,
+    billName,
+    renewDay,
+    frequency,
+    category,
+    cost
+  };
+  // Insert the recurring-bill into the bill table
+  pool.query('INSERT INTO `Recurring-bill` SET ?', newRecurring, (err, results) => {
+    if (err) {
+      console.error('Error inserting recurring bill:', err);
+      return res.status(500).json({ success: false, error: 'Failed to add recurring bill' });
+    }
+    // Return a success message and the inserted bill data
+    newRecurring.recurID = results.insertId;
+    res.status(201).json({ success: true, message: 'Recurring bill added successfully', recur: newRecurring });
+  });
+});
+
+// ADD BUDGET-INFO ENTRY TO ACCOUNT
+app.post('/api/budgetInfo', (req, res) => {
+  const { accountID, currentBalance, amountSpent, spendingPlan, frequency } = req.body;
+  
+  // Create a budget object to insert into the database
+  const newBudget = {
+    accountID, 
+    currentBalance, 
+    amountSpent, 
+    spendingPlan, 
+    frequency
+  };
+
+  // Insert the budget-info into the database
+  pool.query('INSERT INTO `budget-info` SET ?', newBudget, (err, results) => {
+    if (err) {
+      console.error('Error inserting new budget plan:', err);
+      return res.status(500).json({ success: false, error: 'Failed to add new budget plan' });
+    }
+    // Return a success message and the inserted budget data
+    newBudget.budgetID = results.insertId;
+    res.status(201).json({ success: true, message: 'New budget plan added successfully', budget: newBudget });
+  });
+});
+
 
 ////////ADD EVENT
 app.post('/api/events', (req, res) => {
@@ -388,6 +451,27 @@ app.delete('/remove/events/:id', (req, res) => {
       res.status(200).json({ success: true, message: 'Event deleted successfully' });
     } else {
       res.status(404).json({ success: false, message: 'Event not found' });
+    }
+  });
+});
+
+////////REMOVE RECURRING
+app.delete('/remove/recurring/:id', (req, res) => {
+  // Extract the event ID from the URL parameters
+  const recurID = req.params.id;
+
+  // Query to delete the event from the Event table based on its ID
+  pool.query('DELETE FROM `Recurring-Bill` WHERE recurID = ?', [recurID], (err, results) => {
+    if (err) {
+      console.error('Error deleting recur-bill:', err);
+      return res.status(500).json({ success: false, error: 'Failed to delete recur-bill' });
+    }
+
+    // Check the number of rows affected by the query
+    if (results.affectedRows > 0) {
+      res.status(200).json({ success: true, message: 'recur-bill deleted successfully' });
+    } else {
+      res.status(404).json({ success: false, message: 'recur-bill not found' });
     }
   });
 });

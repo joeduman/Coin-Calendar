@@ -1,0 +1,72 @@
+.modalContainer {
+    width: 500px;
+    max-height: 500px;
+    border-radius: 12px;
+    background-color: #539ADB;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 25px;
+    position: fixed; /* Use fixed positioning */
+    top: 50%; /* Move the modal down by 50% of the viewport height */
+    left: 50%; /* Move the modal right by 50% of the viewport width */
+    transform: translate(-50%, -50%); /* Translate the modal back by half its width and height */
+  }
+
+.modalContainer .eventForm {
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Arrange items vertically */
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
+}
+  
+  
+
+.modalContainer h1 {
+    display: inline-block;
+    text-align: center;
+    margin-top: 10px;
+    color: white;
+}
+
+.titleCloseBtn {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.titleCloseBtn button {
+    border: none;
+    color: white;
+    background-color: transparent;
+    font-size: 25px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.titleCloseBtn button:hover {
+    color: black;
+}
+
+.modalContainer .addButton {
+    width: 150px;
+    height: 45px;
+    margin: 10px;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    border-radius: 3rem;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    transition: color 0.3s ease;
+}
+
+.modalContainer .addButton:hover {
+    width: 150px;
+    height: 45px;
+    margin: 10px;
+    border: none;
+    background-color: black;
+    color: white;
+    border-radius: 3rem;
+    font-size: 20px;
+    cursor: pointer;
+}

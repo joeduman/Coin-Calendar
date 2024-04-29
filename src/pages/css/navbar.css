@@ -15,7 +15,6 @@
     font-size: 2rem;
     color: white;
     margin-left: 2rem;
-    z-index: 1; /* Ensure text is on top of background */
 }
 
 .site-title::before {
@@ -28,7 +27,6 @@
     background-image: url('coin_calendar.png');
     background-repeat: no-repeat;
     background-size: contain; /* Adjust as needed */
-    z-index: 0; /* Ensure background is behind text */
     margin-left: -3.75rem;
 }
 

@@ -1,9 +1,4 @@
-import HomePage from "./home";
-import { CgProfile } from "react-icons/cg";
-import { FaRegUser } from "react-icons/fa";
-import { RiLockPasswordLine } from "react-icons/ri";
-import React, { useState, useEffect } from "react";
-import {BrowserRouter, Routes, Route, Link} from 'react-router-dom';
+import React, { useState } from "react";
 import axios from 'axios';
 import './css/signup.css';
 
@@ -53,6 +48,7 @@ export default function SignupPage() {
         email,
         phone
       });
+      
       alert('Sign up successful'); // Display success message
       // You can reset the form fields here if needed
       window.location.href = '/';

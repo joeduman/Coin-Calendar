@@ -1,14 +1,12 @@
 import React from "react";
+import "./pages/css/home.css";
 
 const EventList = ({ events }) => {
   // Define a max height for the event list container and set overflow to auto to enable scrolling.
-  const eventListStyle = {
-    maxHeight: "200px", // Adjust this height as needed
-    overflowY: "auto"
-  };
+
 
   return (
-    <div className="event-list" style={eventListStyle}>
+    <div className="event-list">
       {events.map((event, index) => (
         <p
           key={index}

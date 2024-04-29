@@ -19,12 +19,42 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 1rem;
+    margin-bottom: 5rem;
     box-shadow: 0 0 10px rgba(58, 58, 58, 0.2); /* Add shadow */
 }
 
 .widget p{
     margin-top: 50px;
 }
+
+.event-list-container {
+    height: 200px; /* Set a fixed height for the container to enable scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: auto;
+  }
+
+.event-list-container p{
+    margin-top: 10px;
+}
+  
+  .event-list-container::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+  }
+  
+  .event-list-container::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Track color */
+    border-radius: 100px;
+  }
+  
+  .event-list-container::-webkit-scrollbar-thumb {
+    background: #888; /* Thumb color */
+    border-radius: 100px;
+  }
+  
+  .event-list-container::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Thumb color on hover */
+  }
+  
 
 h3{
     margin-top: 1rem;
@@ -57,7 +87,7 @@ h3{
 .eventContainer {
     background-color: #e6e6e6;
     border-radius: 1rem;
-    margin-top: 1rem;
+    margin-top: 5rem;
     display: flex;
     justify-content: space-evenly;
     padding: 0;
@@ -73,6 +103,19 @@ h3{
 
 .add-event {
     color: white;
+}
+
+.addButtonModal{
+    width: 30%; /* Set the width to 30% of the viewport width */
+    height: auto; /* Let the height adjust based on content */
+    max-height: 30%; /* Set the max-height to 30% of the viewport height */
+    margin: auto; /* Center the modal vertically */
+    position: absolute; /* Position the modal absolutely */
+    left: 0; /* Align the left edge to the left of the viewport */
+    right: 0; /* Align the right edge to the right of the viewport */
+    margin-left: auto; /* Center the modal horizontally */
+    overflow: auto; /* Allow content scrolling if needed */
+    opacity: 50%;
 }
 
 .hover-tooltip {
@@ -136,6 +179,7 @@ h3{
     width: calc(60% - 4px);
     margin-top: -2.5rem;
     margin-right: 4px;
+    z-index: 0;
 } 
 
 .divBar{
@@ -152,8 +196,8 @@ h3{
 }
 
 .event-details {
-    margin-right: 40rem;
-    margin-top: 30rem;
+    /* margin-right: 40rem;
+    margin-top: 30rem; */
     width: 25vw;
     padding: 20px;
     background-color: #fff;
@@ -169,6 +213,32 @@ h3{
     margin-right: 10px;
 }
 
+.openAddEventBtn {
+    padding-bottom: 5rem;
+    font-size: 50px;
+    background-color: #539ADB;
+    color: white; /* Set text color to white */
+    border: none;
+    width: 4vw;
+    height: 4vw;
+    border-radius: 3rem;
+    transition: background-color 0.5s ease;
+}
+
+.openAddEventBtn:hover {
+    background-color: #D663FF;
+}
+
+.openAddEventBtn[id='2']:hover {
+    background-color: #FF6363;
+}
+  
+.openAddEventBtn[id='3']:hover {
+    background-color: #63FF72;
+}
+.openAddEventBtn[id='4']:hover {
+    background-color: #FFDD63;
+}
 
 input[type="text"],
 button {

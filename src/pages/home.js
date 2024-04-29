@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi";
 import { Link } from 'react-router-dom';
+import Modal from 'react-modal';
 import DatePicker from "react-datepicker";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "./css/home.css";
+import "./css/modal.css";
 
 import axios from 'axios';
 
@@ -32,7 +34,37 @@ const expenses = [];
 const recurringBills = [];
 
 export default function HomePage() {
+  const [modal1Open, set1Open] = useState(false);
+  const [modal2Open, set2Open] = useState(false);
+  const [modal3Open, set3Open] = useState(false);
+  const [modal4Open, set4Open] = useState(false);
 
+  function openModal1() {
+    set1Open(true);
+  }
+  function closeModal1() {
+    set1Open(false);
+  }
+  function openModal2() {
+    set2Open(true);
+  }
+  function closeModal2() {
+    set2Open(false);
+  }
+  function openModal3() {
+    set3Open(true);
+  }
+  function closeModal3() {
+    set3Open(false);
+  }
+  function openModal4() {
+    set4Open(true);
+  }
+  function closeModal4() {
+    set4Open(false);
+  }
+
+  //EVENT
   const [newEvent, setNewEvent] = useState({
     title: "",
     start: "",
@@ -51,28 +83,25 @@ export default function HomePage() {
     expenseID: null
   });
 
-  const [allBills, setAllBills] = useState(recurringBills);
-
-  function handleNewBill() {
-    if (!newBill.name || !newBill.amount || !newBill.day) {
-      alert("Please fill out all fields");
-      return;
-    }
-    newBill.amount = '$' + newBill.amount
-    setAllBills([...allBills, newBill]);
-    setNewBill({
-      name: "",
-      amount: "",
-      day: ""
-    });
-  }
+  //RECURRING-BILL
+  const [newRecur, setNewRecurring] = useState({
+    name: "",
+    category: "",
+    renewDate: "",
+    cost: "",
+    frequency: "",
+    recurID: null
+  });
 
   const [newBill, setNewBill] = useState({
     name: "",
     amount: "",
-    day: ""
+    day: "",
+    frequency: "",
   });
+
   const [allExpenses, setAllExpenses] = useState(expenses);
+  const [allRecurring, setAllRecurring] = useState(recurringBills)
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [allEvents, setAllEvents] = useState(events);
   const [balance, setBalance] = useState(0);
@@ -183,19 +212,32 @@ export default function HomePage() {
     if (event.isExpense) {
       return {
         style: {
-          backgroundColor: 'orange', // Color for expenses
+          backgroundColor: '#FF6363', // Color for expenses
+        },
+      };
+    }
+    else if (event.isRecur) {
+      return {
+        style: {
+          backgroundColor: '#FFDD63',
+        },
+      };
+    }
+    else if (event.isDeposit) {
+      return {
+        style: {
+          backgroundColor: '#63FF72',
         },
       };
     }
     else {
       return {
         style: {
-          backgroundColor: '#4078c0',
+          backgroundColor: '#D663FF',
         },
       };
     }
   }
-
 
   async function handleAddExpense() {
     if ((String(newExpense.name).length || String(newExpense.category).length) > 12) {
@@ -216,6 +258,9 @@ export default function HomePage() {
       spendingQuota: `$${newExpense.cost}`,
       allDay: true, // Assuming the expense occurs on a single day
       isExpense: true, // Mark as an expense
+      isRecur: false,
+      isEvent: false,
+      isDeposit: false,
     };
 
     // Add the expense event to the list of calendar events
@@ -250,6 +295,70 @@ export default function HomePage() {
     } catch (error) {
       console.error("Failed to add expense to the database:", error);
       alert("Error adding expense to the database. Please try again.");
+    }
+  }
+
+  async function handleAddRecurring() {
+    if ((String(newRecur.name).length || String(newRecur.category).length) > 12) {
+      alert("bill details must be less than 12 characters!");
+      return;
+    }
+    if (!newRecur.name || !newRecur.category || !newRecur.date || !newRecur.cost || !newRecur.frequency) {
+      alert("Please fill out all the fields.");
+      return;
+    }
+
+    // Create a new Date object for the current month
+    const currentDate = new Date();
+    const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+
+    // Create a new event for the recur in calendar
+    const recurEvent = {
+      name: newRecur.name,
+      start: currentMonthStart,
+      end: currentMonthStart,
+      category: newRecur.category,
+      frequency: newRecur.frequency,
+      allDay: true, // Assuming the expense occurs on a single day
+      isExpense: false, // Mark as an expense
+      isRecur: true,
+      isEvent: false,
+      isDeposit: false,
+    };
+
+    // Add the expense event to the list of calendar events
+    try {
+      // Send an HTTP POST request to the backend API using Axios to add the expense
+      const response = await axios.post('http://localhost:5000/api/recurring', {
+        accountID: accountID,
+        billName: newRecur.name,
+        renewDay: parseInt(newRecur.date),
+        frequency: newRecur.frequency,
+        category: newRecur.category,
+        cost: parseFloat(newRecur.cost)
+      });
+
+      // Update the state with the newly added bill
+      recurEvent.recurID = response.data.recurring.recurID;
+      newRecur.recurID = response.data.recurring.recurID;
+      setAllRecurring([...allRecurring, newRecur]);
+      setAllEvents([...allEvents, recurEvent]);
+
+      console.log("Recurring bill added to the database.");
+
+      // Reset the newrecurring state
+      setNewRecurring({
+        name: "",
+        category: "",
+        date: "",
+        cost: "",
+        frequency: "",
+        recurID: null
+      });
+
+    } catch (error) {
+      console.error("Failed to add recurring-bill to the database:", error);
+      alert("Error adding recurring-bill to the database. Please try again.");
     }
   }
 
@@ -302,8 +411,31 @@ export default function HomePage() {
           });
           setAllEvents(updatedEvents);
         }
+      } else if (selectedEvent.isRecur){
+        console.log("is recurring");
+        console.log("recurid:" + selectedEvent.recurID);
+        const recurToRemove = allRecurring.find(recur => recur.recurID === selectedEvent.recurID);
+        if (recurToRemove) {
+          // Make an HTTP DELETE request to remove the expense from the database
+          console.log("found recur");
+          await axios.delete("http://localhost:5000/remove/recurring/" + selectedEvent.recurID);
+          console.log('Expense deleted from the database successfully');
+          // Remove the expense from the allExpenses array
+          const updatedRecurring = allExpenses.filter(recur => recur.recurID !== recurToRemove.recurID);
+          setAllRecurring(updatedRecurring);
+          // Close the event details panel
+          setSelectedEvent(null);
+          // Remove the selected event from the allEvents array
+          const updatedEvents = allEvents.filter(event => {
+            // Check if the event is the one selected for removal
+            if (event === selectedEvent) {
+              return false; // Remove this event
+            }
+            return true; // Keep other events
+          });
+          setAllEvents(updatedEvents);
+        }
       } else {
-
         // Make an HTTP DELETE request to remove the event from the database
         await axios.delete("http://localhost:5000/remove/events/" + selectedEvent.eventID);
 
@@ -346,6 +478,7 @@ export default function HomePage() {
         .catch(err => console.error('Error fetching events:', err));
     }
   }, [username]);
+
   /////////POPULATE USER EXPENSES
   useEffect(() => {
     if (username) {
@@ -374,6 +507,53 @@ export default function HomePage() {
               expenseID: expense.expenseID,
               allDay: true, // Assuming the expense occurs on a single day
               isExpense: true, // Mark as an expense
+              isRecur: false,
+              isEvent: false,
+              isDeposit: false,
+            }));
+
+            // Add the formatted events to the allEvents array
+            setAllEvents((prevEvents) => [...prevEvents, ...formattedEvents]);
+          }
+        })
+        .catch(err => console.error('Error fetching expenses:', err));
+    }
+  }, [username]);
+
+  /////////POPULATE USER RECURRING-BILLS
+  useEffect(() => {
+    if (username) {
+      axios.get(`http://localhost:5000/recurring/${username}`)
+        .then(res => {
+          // Create a new Date object for the current month
+          const currentDate = new Date();
+          if (res.data && res.data.length > 0) {
+            // Map over each expense from the server response
+            const formattedRecurring = res.data.map((recurData) => ({
+              name: recurData.billName,
+              date: new Date(currentDate.getFullYear(), currentDate.getMonth(), recurData.renewDay),
+              category: recurData.category,
+              frequency: recurData.frequency,
+              cost: recurData.cost,
+              recurID: recurData.recurID,
+            }));
+
+            // Update the state by adding all formatted expenses to the allExpenses array
+            setAllRecurring((prevRecurring) => [...prevRecurring, ...formattedRecurring]);
+
+            // Iterate over each formatted expense to convert it into an event
+            const formattedEvents = formattedRecurring.map((recur) => ({
+              title: recur.name,
+              start: recur.date,
+              end: recur.date,
+              description: recur.category,
+              spendingQuota: `$${recur.cost}`,
+              recurID: recur.recurID,
+              allDay: true, // Assuming the expense occurs on a single day
+              isExpense: false, // Mark as an expense
+              isRecur: true,
+              isEvent: false,
+              isDeposit: false,
             }));
 
             // Add the formatted events to the allEvents array
@@ -392,11 +572,6 @@ export default function HomePage() {
       <nav className="navbar">
         <a href="/" className="site-title">Coin Calendar<a className="site-title-2">for visualizing your budget!</a></a>
         <ul>
-          <div className="legend">
-            <span className="legend-item orange-square"></span> Orange: Expenses
-            <span className="legend-item blue-square"></span> Blue: Events
-          </div>
-
           <li className="active"><Link to="/home">Home</Link></li>
           <li><Link to="/:username/dashboard">Dashboard</Link></li>
           <li><Link to="/:username/settings">Settings</Link></li>
@@ -406,11 +581,8 @@ export default function HomePage() {
 
       <div className="Home">
         <h1><u>{username}'s Coin Calendar</u>
-
           <HiOutlineQuestionMarkCircle
-            className="hover-tooltip"
-            title="Orange : Expenses
-           Blue : Events"/>
+            className="hover-tooltip"/>
         </h1>
 
         <div className="container">
@@ -444,7 +616,15 @@ export default function HomePage() {
                 </tr>
               </table>
             </div>
-
+            <div className="widget">
+              <div>
+                <h2>Balance: ${balance}</h2>
+                <div className="event-list-container">
+                <EventList events={allEvents} />
+                </div>
+              </div>
+            </div>
+            
             {selectedEvent && (
               <div className="event-details">
                 <h2>Details</h2>
@@ -460,10 +640,24 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div /*ADD EVENT */ className="eventContainer">
+
+        <div className="eventContainer">
+        <button
+        className="openAddEventBtn"
+        onClick={() => {openModal1(true);}}> + </button>
+        <Modal
+          className="modalContainer"
+          isOpen={modal1Open}
+          onRequestClose={closeModal1}
+        >
+          <div className="titleCloseBtn">
+            <button onClick={() => {closeModal1();}}> X </button>
+          </div>
+
+          <div className="eventForm">
+          <h1>Add Event</h1>
           <div className="add-event-container">
             <div className="add-event">
-              <h2>Add Event</h2>
               <input
                 type="text"
                 placeholder="Add Title"
@@ -524,10 +718,26 @@ export default function HomePage() {
                 />
                 All Day Event
               </label>
-              <button onClick={handleAddEvent}>Add Event</button>
+              <button className="addButton" onClick={() => { handleAddEvent(); closeModal1(); }}>Add Event</button>
             </div>
           </div>
+        </div> 
+        </Modal>
 
+        <button
+        className="openAddEventBtn"
+        onClick={() => {openModal2(true);}}
+        id='2'> + </button>
+        <Modal
+          className="modalContainer"
+          isOpen={modal2Open}
+          onRequestClose={closeModal2}
+        >
+          <div className="titleCloseBtn">
+            <button onClick={() => {closeModal2();}}> X </button>
+          </div>
+
+          <div className="eventForm">
           <div /*ADD EXPENSE */ className="add-event-container">
             <div className="add-event">
               <h2>Add Expense</h2>
@@ -554,66 +764,94 @@ export default function HomePage() {
                 value={newExpense.cost}
                 onChange={(e) => setNewExpense({ ...newExpense, cost: e.target.value })}
               />
-              <button onClick={handleAddExpense}>Add Expense</button>
+              <button className="addButton" onClick={() => { handleAddExpense(); closeModal2(); }}>Add Expense</button>
             </div>
+          </div>
+          
+          </div>
+        </Modal>
+
+        <button
+        className="openAddEventBtn"
+        onClick={() => {openModal3(true);}}
+        id='3'> + </button>
+        <Modal
+          className="modalContainer"
+          isOpen={modal3Open}
+          onRequestClose={closeModal3}
+        >
+          <div className="titleCloseBtn">
+            <button onClick={() => {closeModal3();}}> X </button>
           </div>
 
-          <div /*ADD DEPOSIT */ className="add-event-container">
-            <div className="add-event">
-              <h2>Add Deposit</h2>
-              <input
-                type="text"
-                placeholder="Amount"
-              />
-              <button onClick={handleNewBill}>Add Deposit</button>
+          <div className="eventForm">
+            <div /*ADD DEPOSIT */ className="add-event-container">
+              <div className="add-event">
+                <h2>Add Deposit</h2>
+                <input
+                  type="number"
+                  placeholder="Enter Balance"
+                  value={updatedBalance}
+                  onChange={(e) => setUpdatedBalance(parseInt(e.target.value))}
+                />
+                <button onClick={() => { handleUpdateBalance(); closeModal3(); }}>Update Balance</button>
+              </div>
             </div>
+          </div>
+        </Modal>
+
+        <button
+        className="openAddEventBtn"
+        onClick={() => {openModal4(true);}}
+        id='4'> + </button>
+        <Modal
+          className="modalContainer"
+          isOpen={modal4Open}
+          onRequestClose={closeModal4}
+        >
+          <div className="titleCloseBtn">
+            <button onClick={() => {closeModal4();}}> X </button>
           </div>
 
-          <div /*ADD RECUR */ className="add-event-container">
-            <div className="add-event">
-              <h2>Add Recurring Bill</h2>
-              <input
-                type="text"
-                placeholder="Bill Name"
-                value={newBill.name}
-                onChange={(e) =>
-                  setNewBill({ ...newBill, name: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Amount"
-                value={newBill.amount}
-                onChange={(e) =>
-                  setNewBill({ ...newBill, amount: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Day"
-                value={newBill.day}
-                onChange={(e) =>
-                  setNewBill({ ...newBill, day: e.target.value })
-                }
-              />
-              <button onClick={handleNewBill}>Add Bill</button>
+          <div className="eventForm">
+            <div /*ADD RECUR */ className="add-event-container">
+              <div className="add-event">
+                <h2>Add Recurring Bill</h2>
+                <input
+                  type="text"
+                  placeholder="Bill Name"
+                  value={newRecur.name}
+                  onChange={(e) => setNewRecurring({ ...newRecur, name: e.target.value })}
+                />
+                <input
+                  type="text"
+                  placeholder="Category"
+                  value={newRecur.category}
+                  onChange={(e) => setNewRecurring({ ...newRecur, category: e.target.value })}
+                />
+                <input
+                  type="text"
+                  placeholder="Amount"
+                  value={newRecur.cost}
+                  onChange={(e) => setNewRecurring({ ...newRecur, cost: e.target.value })}
+                />
+                <input
+                  type="number"
+                  placeholder="Renewal Date"
+                  value={newRecur.date}
+                  onChange={(e) => setNewRecurring({ ...newRecur, date: e.target.value })}
+                />
+                <input
+                  type="text"
+                  placeholder="Frequency"
+                  value={newRecur.frequency}
+                  onChange={(e) => setNewRecurring({ ...newRecur, frequency: e.target.value })}
+                />
+                <button className="addButton" onClick={() => { handleAddRecurring(); closeModal4(); }}>Add Bill</button>
+              </div>
             </div>
           </div>
-
-          <div className="container">
-            <div className="balance-section">
-              <h2>Balance: ${balance}</h2>
-              <input
-                type="number"
-                placeholder="Enter Balance"
-                value={updatedBalance}
-                onChange={(e) => setUpdatedBalance(parseInt(e.target.value))}
-              />
-              <button onClick={handleUpdateBalance}>Update Balance</button>
-              <h2>Expected Balance: ${expectedBalance}</h2>
-              <EventList events={allEvents} />
-            </div>
-          </div>
+        </Modal>
 
         </div>
       </div>
