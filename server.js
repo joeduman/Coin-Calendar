@@ -383,7 +383,9 @@ app.post('/api/recurring', (req, res) => {
   });
 });
 
-// ADD BUDGET-INFO ENTRY TO ACCOUNT
+// ADD A NEW BUDGET-INFO ENTRY TO ACCOUNT
+// should only be done once per account (during sign up)
+// appending this needs to be done in different function
 app.post('/api/budgetInfo', (req, res) => {
   const { accountID, currentBalance, amountSpent, spendingPlan, frequency } = req.body;
   

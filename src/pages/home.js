@@ -87,7 +87,7 @@ export default function HomePage() {
   const [newRecur, setNewRecurring] = useState({
     name: "",
     category: "",
-    renewDate: "",
+    date: "",
     cost: "",
     frequency: "",
     recurID: null
@@ -111,7 +111,7 @@ export default function HomePage() {
   const [accountID, setAccountID] = useState('');
 
   useEffect(() => {
-    // Fetch username from local storage
+    //Fetch username from local storage
     const storedUsername = localStorage.getItem('username');
     setUsername(storedUsername);
   }, []);
@@ -162,6 +162,36 @@ export default function HomePage() {
 
     return formattedDate;
   }
+
+  function handleDateChange(day) {
+    const inputValue =  day.value;
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // Months are 0 indexed, so add 1
+    const currentYear = currentDate.getFullYear();
+    const maxDayOfMonth = new Date(currentYear, currentMonth, 0).getDate();
+    const inputDate = new Date(currentYear, currentMonth, inputValue).getDate();
+
+    // If the input value is greater than the maximum day of the current month,
+    // set the input value to the maximum day of the current month
+    if (inputDate > maxDayOfMonth) {
+      setNewRecurring({ ...newRecur, date: maxDayOfMonth });
+    } else {
+      setNewRecurring({ ...newRecur, date: inputDate });
+    }
+  };
+
+  const handleDateMax = (e) => {
+    let inputValue = parseInt(e.target.value);
+
+
+    console.log("date is maxed off");
+    // If the input value is greater than 31, set it to 31
+    if (inputValue > 31) {
+      inputValue = 31;
+    }
+
+    setNewRecurring({ ...newRecur, date: inputValue });
+  };
 
 
   async function handleAddEvent() {
@@ -310,7 +340,7 @@ export default function HomePage() {
 
     // Create a new Date object for the current month
     const currentDate = new Date();
-    const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), handleDateChange(newRecur.date));
 
     // Create a new event for the recur in calendar
     const recurEvent = {
@@ -332,15 +362,16 @@ export default function HomePage() {
       const response = await axios.post('http://localhost:5000/api/recurring', {
         accountID: accountID,
         billName: newRecur.name,
-        renewDay: parseInt(newRecur.date),
+        renewDay: newRecur.date,
         frequency: newRecur.frequency,
         category: newRecur.category,
-        cost: parseFloat(newRecur.cost)
+        cost: newRecur.cost
       });
 
+
       // Update the state with the newly added bill
-      recurEvent.recurID = response.data.recurring.recurID;
-      newRecur.recurID = response.data.recurring.recurID;
+      recurEvent.recurID = response.data.recur.recurID;
+      newRecur.recurID = response.data.recur.recurID;
       setAllRecurring([...allRecurring, newRecur]);
       setAllEvents([...allEvents, recurEvent]);
 
@@ -412,12 +443,9 @@ export default function HomePage() {
           setAllEvents(updatedEvents);
         }
       } else if (selectedEvent.isRecur){
-        console.log("is recurring");
-        console.log("recurid:" + selectedEvent.recurID);
         const recurToRemove = allRecurring.find(recur => recur.recurID === selectedEvent.recurID);
         if (recurToRemove) {
           // Make an HTTP DELETE request to remove the expense from the database
-          console.log("found recur");
           await axios.delete("http://localhost:5000/remove/recurring/" + selectedEvent.recurID);
           console.log('Expense deleted from the database successfully');
           // Remove the expense from the allExpenses array
@@ -570,7 +598,7 @@ export default function HomePage() {
   return (
     <div>
       <nav className="navbar">
-        <a href="/" className="site-title">Coin Calendar<a className="site-title-2">for visualizing your budget!</a></a>
+        <a href="/" className="site-title">Coin Calendar<span className="site-title-2">for visualizing your budget!</span></a>
         <ul>
           <li className="active"><Link to="/home">Home</Link></li>
           <li><Link to="/:username/dashboard">Dashboard</Link></li>
@@ -603,17 +631,21 @@ export default function HomePage() {
           <div className="rightside">
             <div className="widget">
               <h2>Monthly Budget</h2>
-              <p>You still have ${expectedBalance} left</p>
+              <p>You have ${expectedBalance} left</p>
               <progress className="progress-bar" max={balance} value={balance - expectedBalance} />
               <table className="budget">
-                <tr>
-                  <th>Money Spent</th>
-                  <th>Budget Remaining</th>
-                </tr>
-                <tr>
-                  <td className="spent">${(balance - expectedBalance)}</td>
-                  <td className="remain">${expectedBalance}</td>
-                </tr>
+                <thead>
+                  <tr>
+                    <th>Money Spent</th>
+                    <th>Budget Remaining</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="spent">${(balance - expectedBalance)}</td>
+                    <td className="remain">${expectedBalance}</td>
+                  </tr>
+                </tbody>
               </table>
             </div>
             <div className="widget">
@@ -649,6 +681,7 @@ export default function HomePage() {
           className="modalContainer"
           isOpen={modal1Open}
           onRequestClose={closeModal1}
+          ariaHideApp={false}
         >
           <div className="titleCloseBtn">
             <button onClick={() => {closeModal1();}}> X </button>
@@ -732,6 +765,7 @@ export default function HomePage() {
           className="modalContainer"
           isOpen={modal2Open}
           onRequestClose={closeModal2}
+          ariaHideApp={false}
         >
           <div className="titleCloseBtn">
             <button onClick={() => {closeModal2();}}> X </button>
@@ -779,6 +813,7 @@ export default function HomePage() {
           className="modalContainer"
           isOpen={modal3Open}
           onRequestClose={closeModal3}
+          ariaHideApp={false}
         >
           <div className="titleCloseBtn">
             <button onClick={() => {closeModal3();}}> X </button>
@@ -808,6 +843,7 @@ export default function HomePage() {
           className="modalContainer"
           isOpen={modal4Open}
           onRequestClose={closeModal4}
+          ariaHideApp={false}
         >
           <div className="titleCloseBtn">
             <button onClick={() => {closeModal4();}}> X </button>
@@ -830,7 +866,7 @@ export default function HomePage() {
                   onChange={(e) => setNewRecurring({ ...newRecur, category: e.target.value })}
                 />
                 <input
-                  type="text"
+                  type="number"
                   placeholder="Amount"
                   value={newRecur.cost}
                   onChange={(e) => setNewRecurring({ ...newRecur, cost: e.target.value })}
@@ -839,12 +875,12 @@ export default function HomePage() {
                   type="number"
                   placeholder="Renewal Date"
                   value={newRecur.date}
-                  onChange={(e) => setNewRecurring({ ...newRecur, date: e.target.value })}
+                  onChange={handleDateMax}
                 />
                 <input
                   type="text"
                   placeholder="Frequency"
-                  value={newRecur.frequency}
+                  value={newRecur.frequency = 'monthly'}
                   onChange={(e) => setNewRecurring({ ...newRecur, frequency: e.target.value })}
                 />
                 <button className="addButton" onClick={() => { handleAddRecurring(); closeModal4(); }}>Add Bill</button>

@@ -1,6 +1,7 @@
 .Home {
     background-color: #f0f0f0;
     padding: 20px;
+    margin-bottom: 3rem;
 }
 
 .container {
@@ -144,6 +145,7 @@ h3{
 /* Increase font size of month text */
 .rbc-toolbar span {
     font-size: 48px;
+    margin-top: 1rem;
 }
 
 /* Change color of month/week/day buttons */
