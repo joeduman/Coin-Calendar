@@ -650,7 +650,7 @@ export default function HomePage() {
             </div>
             <div className="widget">
               <div>
-                <h2>Balance: ${balance}</h2>
+                <h2>Deopsited Balance: ${balance}</h2>
                 <div className="event-list-container">
                 <EventList events={allEvents} />
                 </div>
