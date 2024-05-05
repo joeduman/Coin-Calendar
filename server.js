@@ -400,6 +400,45 @@ app.post('/api/recurring', (req, res) => {
   });
 });
 
+app.put('api/updateBudget', (req, res) => {
+    const { accountID, selectedBudget } = req.body;
+
+    let Savings, Essentials, Spending;
+
+    if (selectedBudget === "Option 2") {
+        Savings = 0.2;
+        Essentials = 0.5;
+        Spending = 0.3;
+    } else if (selectedBudget === "Option 3") {
+        Savings = 0.2;
+        Essentials = 0.6;
+        Spending = 0.2;
+    } else if (selectedBudget === "Option 4") {
+        Savings = 0.1;
+        Essentials = 0.4;
+        Spending = 0.5;
+    }
+
+    const budgetPlan = {
+        accountID,
+        totalBalance,
+        monthlySavings: Savings,
+        monthlyEssentials: Essentials,
+        monthlySpending: Spending,
+        frequency
+    };
+
+    const update = "UPDATE `budget-info` SET ? WHERE accountID = ?"
+    pool.query(update, [budgetPlan, accountID], (err, results) => {
+        if (err) {
+            console.error('Error updating budget plan:', err);
+            return res.status(500).json({ success: false, error: 'Failed to update budget plan' });
+        }
+        // Return a success message and the inserted budget data
+        budgetPlan.budgetID = results.insertId;
+        res.status(201).json({ success: true, message: 'Budget plan updated', budget: budgetPlan });
+    });
+});
 
 ////////ADD EVENT
 app.post('/api/events', (req, res) => {
