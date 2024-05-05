@@ -10,11 +10,10 @@
 }
 
 .loginPage {
-    font-size: 1.25em;
-    background: rgb(2,0,36);
-    background: linear-gradient(22deg, rgba(2,0,36,1) 0%, rgba(0,133,255,1) 35%, rgba(0,212,255,1) 100%);
+    font-size: 0.9vw;
+    background: rgb(2, 0, 36);
+    background: linear-gradient(22deg, rgba(2, 0, 36, 1) 0%, rgba(0, 133, 255, 1) 35%, rgba(0, 212, 255, 1) 100%);
     height: 100vh;
-    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,56 +21,44 @@
 
 .loginCover {
     background-color: white;
-    width: 25%;
-    height: 65%;
+    width: 25vw; /* Adjust width relative to viewport width */
+    height: 65vh; /* Adjust height relative to viewport height */
     position: relative;
-    border-radius: 2em;
-    /* box-shadow: 0 0.188em 1.550em rgb(156, 156, 156); */
+    border-radius: 2vw; /* Adjust border radius relative to viewport width */
     display: flex;
     overflow-y: auto;
     flex-direction: column;
-    flex-wrap: nowrap;
-    align-content: center;
     justify-content: space-evenly;
     align-items: center;
 }
 
-.loginInput{
+.loginInput {
     border: none;
     background-color: rgb(229, 226, 226);
-    width: 15rem;
-    border-radius: 0.25em;
+    width: 12vw; /* Adjust width relative to viewport width */
+    border-radius: 0.25vw; /* Adjust border radius relative to viewport width */
     text-align: center;
-    padding: 2em;
-    font-size: 0.75em;
+    padding: 2vh; /* Adjust padding relative to viewport width */
+    font-size: 0.75vw; /* Adjust font size relative to viewport width */
 }
 
-.loginPage .pagetitle{
+.loginPage .pagetitle {
     font-size: 3.5vw;
     color: white;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    position: absolute;
-    top: 20px;
+    margin-top: 3vh; /* Adjust margin relative to viewport height */
+    position: fixed;
+    top: 3vh; /* Adjust position relative to viewport height */
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1;
+    z-index: 0;
 }
 
-.loginText{
+.loginText, .pwtext {
     border: none;
     width: 100%;
-    text-align: left;
-    padding: 0em;
-    font-size: 1rem;
-}
-
-.pwtext{
-    border: none;
-    width: 100%;
-    text-align: right;
-    padding: 0em;
-    font-size: 1rem;
+    text-align: left; /* Adjust text alignment */
+    padding: 0;
+    font-size: 0.9vw; /* Adjust font size relative to viewport width */
 }
 
 .loginInput:focus {
@@ -80,22 +67,20 @@
 
 .loginBtn {
     width: 100%; /* Take up the entire width of its parent */
-    font-size: 20px;
-    height: 4rem;
+    font-size: 0.8vw; /* Adjust font size relative to viewport width */
+    height: 4.5vh; /* Adjust height relative to viewport height */
     color: white;
     background-color: rgb(32, 177, 255);
     transition: 0.5s;
-    border-radius: 3rem;
-    margin-top: 1rem;
+    border-radius: 3vw; /* Adjust border radius relative to viewport width */
+    margin-top: 1vh; /* Adjust margin relative to viewport height */
     cursor: pointer;
     border: none;
-    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.2); /* Adjust shadow */
+    box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.2); /* Adjust shadow relative to viewport width */
     display: flex;
     justify-content: center; /* Center align horizontally */
     align-items: center; /* Center align vertically */
 }
-
-
 
 .loginBtn:hover {
     background-color: rgb(27, 146, 211);

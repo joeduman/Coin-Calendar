@@ -93,13 +93,6 @@ export default function HomePage() {
     recurID: null
   });
 
-  const [newBill, setNewBill] = useState({
-    name: "",
-    amount: "",
-    day: "",
-    frequency: "",
-  });
-
   const [allExpenses, setAllExpenses] = useState(expenses);
   const [allRecurring, setAllRecurring] = useState(recurringBills)
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -163,34 +156,29 @@ export default function HomePage() {
     return formattedDate;
   }
 
-  function handleDateChange(day) {
-    const inputValue =  day.value;
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1; // Months are 0 indexed, so add 1
-    const currentYear = currentDate.getFullYear();
-    const maxDayOfMonth = new Date(currentYear, currentMonth, 0).getDate();
-    const inputDate = new Date(currentYear, currentMonth, inputValue).getDate();
-
-    // If the input value is greater than the maximum day of the current month,
-    // set the input value to the maximum day of the current month
-    if (inputDate > maxDayOfMonth) {
-      setNewRecurring({ ...newRecur, date: maxDayOfMonth });
-    } else {
-      setNewRecurring({ ...newRecur, date: inputDate });
-    }
-  };
-
   const handleDateMax = (e) => {
     let inputValue = parseInt(e.target.value);
-
-
-    console.log("date is maxed off");
-    // If the input value is greater than 31, set it to 31
+    
+    //If the input value is greater than 31, set it to 31
     if (inputValue > 31) {
       inputValue = 31;
     }
+    if (inputValue < 1) {
+      inputValue = 1;
+    }
 
     setNewRecurring({ ...newRecur, date: inputValue });
+  };
+
+  const handleMinAmount = (e) => {
+    let inputValue = parseFloat(e.target.value);
+    
+    //If the input value is greater than 31, set it to 31
+    if (inputValue < 0) {
+      inputValue = 0;
+    }
+
+    setNewRecurring({ ...newRecur, cost: inputValue });
   };
 
 
@@ -340,15 +328,27 @@ export default function HomePage() {
 
     // Create a new Date object for the current month
     const currentDate = new Date();
-    const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), handleDateChange(newRecur.date));
+    const maxDayOfMonth = new Date(currentDate.getFullYear(), 4, 0).getDate();
+
+    // If the input value is greater than the maximum day of the current month,
+    // set the input value to the maximum day of the current month
+    if (newRecur.date > maxDayOfMonth) {
+      newRecur.date = maxDayOfMonth;
+      setNewRecurring({ ...newRecur, date: newRecur.date });
+    } else {
+      setNewRecurring({ ...newRecur, date: newRecur.date });
+    }
+  
+    const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), newRecur.date);
 
     // Create a new event for the recur in calendar
     const recurEvent = {
-      name: newRecur.name,
+      title: newRecur.name,
       start: currentMonthStart,
       end: currentMonthStart,
       category: newRecur.category,
       frequency: newRecur.frequency,
+      spendingQuota: `$${newRecur.cost}`,
       allDay: true, // Assuming the expense occurs on a single day
       isExpense: false, // Mark as an expense
       isRecur: true,
@@ -629,10 +629,16 @@ export default function HomePage() {
           <div className="divBar" />
 
           <div className="rightside">
+
+            <div className="widget" id="totalsavings">
+                <h2>Total Savings</h2>
+                <p>$100</p>
+              </div>
+
             <div className="widget">
               <h2>Monthly Budget</h2>
-              <p>You have ${expectedBalance} left</p>
-              <progress className="progress-bar" max={balance} value={balance - expectedBalance} />
+              <p>You have ${expectedBalance.toFixed(2)} left</p>
+              <progress className="progress-bar" max={balance.toFixed(2)} value={(balance - expectedBalance).toFixed(2)} />
               <table className="budget">
                 <thead>
                   <tr>
@@ -642,19 +648,29 @@ export default function HomePage() {
                 </thead>
                 <tbody>
                   <tr>
+                    <td className="spent">${(balance - expectedBalance).toFixed(2)}</td>
+                    <td className="remain">${expectedBalance.toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="widget" id="balances">
+              <h2>Monthly Balances</h2>
+              <table className="budget">
+                <thead>
+                  <tr>
+                    <th>savings:</th>
+                    <th>spending:</th>
+                    <th>essential:</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
                     <td className="spent">${(balance - expectedBalance)}</td>
                     <td className="remain">${expectedBalance}</td>
                   </tr>
                 </tbody>
               </table>
-            </div>
-            <div className="widget">
-              <div>
-                <h2>Deopsited Balance: ${balance}</h2>
-                <div className="event-list-container">
-                <EventList events={allEvents} />
-                </div>
-              </div>
             </div>
             
             {selectedEvent && (
@@ -676,7 +692,7 @@ export default function HomePage() {
         <div className="eventContainer">
         <button
         className="openAddEventBtn"
-        onClick={() => {openModal1(true);}}> + </button>
+        onClick={() => {openModal1(true);}}/>
         <Modal
           className="modalContainer"
           isOpen={modal1Open}
@@ -688,7 +704,7 @@ export default function HomePage() {
           </div>
 
           <div className="eventForm">
-          <h1>Add Event</h1>
+          <h2>Add Event</h2>
           <div className="add-event-container">
             <div className="add-event">
               <input
@@ -760,7 +776,7 @@ export default function HomePage() {
         <button
         className="openAddEventBtn"
         onClick={() => {openModal2(true);}}
-        id='2'> + </button>
+        id='2'/>
         <Modal
           className="modalContainer"
           isOpen={modal2Open}
@@ -772,43 +788,45 @@ export default function HomePage() {
           </div>
 
           <div className="eventForm">
-          <div /*ADD EXPENSE */ className="add-event-container">
-            <div className="add-event">
-              <h2>Add Expense</h2>
-              <input
-                type="text"
-                placeholder="Expense Name"
-                value={newExpense.name}
-                onChange={(e) => setNewExpense({ ...newExpense, name: e.target.value })}
-              />
-              <input
-                type="text"
-                placeholder="Category"
-                value={newExpense.category}
-                onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
-              />
-              <DatePicker
-                placeholderText="Date"
-                selected={newExpense.date}
-                onChange={(date) => setNewExpense({ ...newExpense, date })}
-              />
-              <input
-                type="number"
-                placeholder="Cost"
-                value={newExpense.cost}
-                onChange={(e) => setNewExpense({ ...newExpense, cost: e.target.value })}
-              />
-              <button className="addButton" onClick={() => { handleAddExpense(); closeModal2(); }}>Add Expense</button>
+            <h2>Add Expense</h2>
+            <div /*ADD EXPENSE */ className="add-event-container">
+              <div className="add-event">
+                <input
+                  type="text"
+                  placeholder="Expense Name"
+                  value={newExpense.name}
+                  onChange={(e) => setNewExpense({ ...newExpense, name: e.target.value })}
+                />
+                <select
+                  placeholder="Category"
+                  value={newExpense.category}
+                  style={{ width: "96%" }}
+                  onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
+                >
+                  <option value="Essential">Essential</option>
+                  <option value="Spending">Spending</option>
+                </select>
+                <DatePicker
+                  placeholderText="Date"
+                  selected={newExpense.date}
+                  onChange={(date) => setNewExpense({ ...newExpense, date })}
+                />
+                <input
+                  type="number"
+                  placeholder="Cost"
+                  value={newExpense.cost}
+                  onChange={(e) => setNewExpense({ ...newExpense, cost: e.target.value })}
+                />
+                <button className="addButton" onClick={() => { handleAddExpense(); closeModal2(); }}>Add Expense</button>
+              </div>
             </div>
-          </div>
-          
           </div>
         </Modal>
 
         <button
         className="openAddEventBtn"
         onClick={() => {openModal3(true);}}
-        id='3'> + </button>
+        id='3'/>
         <Modal
           className="modalContainer"
           isOpen={modal3Open}
@@ -820,16 +838,16 @@ export default function HomePage() {
           </div>
 
           <div className="eventForm">
+            <h2>Add Deposit</h2>
             <div /*ADD DEPOSIT */ className="add-event-container">
               <div className="add-event">
-                <h2>Add Deposit</h2>
                 <input
                   type="number"
                   placeholder="Enter Balance"
                   value={updatedBalance}
                   onChange={(e) => setUpdatedBalance(parseInt(e.target.value))}
                 />
-                <button onClick={() => { handleUpdateBalance(); closeModal3(); }}>Update Balance</button>
+                <button className="addButton" onClick={() => { handleUpdateBalance(); closeModal3(); }}>Add Deposit</button>
               </div>
             </div>
           </div>
@@ -838,7 +856,7 @@ export default function HomePage() {
         <button
         className="openAddEventBtn"
         onClick={() => {openModal4(true);}}
-        id='4'> + </button>
+        id='4'/>
         <Modal
           className="modalContainer"
           isOpen={modal4Open}
@@ -850,26 +868,29 @@ export default function HomePage() {
           </div>
 
           <div className="eventForm">
+            <h2>Add Recurring Bill</h2>
             <div /*ADD RECUR */ className="add-event-container">
               <div className="add-event">
-                <h2>Add Recurring Bill</h2>
                 <input
                   type="text"
                   placeholder="Bill Name"
                   value={newRecur.name}
                   onChange={(e) => setNewRecurring({ ...newRecur, name: e.target.value })}
                 />
-                <input
-                  type="text"
+                <select
                   placeholder="Category"
                   value={newRecur.category}
+                  style={{ width: "96%" }}
                   onChange={(e) => setNewRecurring({ ...newRecur, category: e.target.value })}
-                />
+                >
+                  <option value="Essential">Essential</option>
+                  <option value="Spending">Spending</option>
+                </select>
                 <input
                   type="number"
                   placeholder="Amount"
                   value={newRecur.cost}
-                  onChange={(e) => setNewRecurring({ ...newRecur, cost: e.target.value })}
+                  onChange={handleMinAmount}
                 />
                 <input
                   type="number"
