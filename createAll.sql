@@ -4,7 +4,7 @@ USE CoinCalendar;
 CREATE TABLE IF NOT EXISTS `Account` (
   `username` VARCHAR(30) NOT NULL PRIMARY KEY, -- also the username (PK ensures unique)
   `accountID` INT AUTO_INCREMENT UNIQUE, -- account id that is unique to each account
-  `password` VARCHAR(30) NOT NULL, -- hashed password
+  `password` VARCHAR(150) NOT NULL, -- hashed password
   `fname` VARCHAR(50), -- first name
   `lname` VARCHAR(50), -- last name
   `email` VARCHAR(255), -- email address linked to account, only one
