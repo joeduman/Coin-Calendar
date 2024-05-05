@@ -64,6 +64,42 @@ const DashboardPage = () => {
         setSelectedBudget(e.target.value);
     };
 
+/////////GET ACCOUNTID
+useEffect(() => {
+    if (username) {
+        const fetchAccountID = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/accountID?username=${username}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setAccountID(data.accountID);
+                } else {
+                    console.error('Error fetching accountID:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching accountID:', error);
+            }
+        };
+
+        fetchAccountID();
+    }
+}, [username]);
+
+const handleBudgetChange = async (e) => {
+    setSelectedBudget(e.target.value);
+    if (e.target.value !== 'Option 1') {
+        try {
+            await axios.post('http://localhost:5000/api/updateBudget', {
+                accountID,
+                selectedBudget
+            });
+        } catch (error) {
+            console.error('Error updating budget plan:', error);
+            alert('Error updating budget. Please try again.');
+        }
+    }
+};
+    
     return (
         <div>
             <nav className="navbar">
