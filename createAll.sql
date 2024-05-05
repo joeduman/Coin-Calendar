@@ -55,6 +55,16 @@ CREATE TABLE IF NOT EXISTS `resetpassword` (
   `code` TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS `Budget-Info` ( 
+ `budgetID` INT PRIMARY KEY AUTO_INCREMENT,
+ `accountID` INT NOT NULL,
+ `totalBalance` DECIMAL(10,2), 
+ `monthlySavings` DECIMAL(10,2), 
+ `monthlyEssentials` DECIMAL(10,2), 
+ `monthlySpending` DECIMAL(10,2), 
+ `frequency` ENUM('weekly', 'monthly', 'yearly')
+);
+
 -- simple entry for a user into the database
 INSERT INTO `Account` (`username`, `password`, `fname`, `lname`, `email`, `phone`)
 VALUES("testAccount", "testPassword", "Jack", "Black", "coincalendartest@gmail.com", "111-111-1111");
