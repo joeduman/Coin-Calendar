@@ -41,8 +41,11 @@ export default function HomePage() {
   const [currentMonth,setCurrentMonth] = useState('');
   const [currentMonthDigit,setCurrentMonthDigit] = useState(0);
   const [currentYear,setCurrentYear] = useState(0);
-  const [spending,setSpending] = useState(0);
-  const [essential,setEssential] = useState(0);
+  const [spending,setSpending] = useState(0.00);
+  const [essential,setEssential] = useState(0.00);
+  const [savingpercentage,setSavingPercentage] = useState(0.0);
+  const [essentialpercentage,setEssentialPercentage] = useState(0.0);
+  const [spendingpercentage, setSpendingPercentage] = useState(0.0);
 
   function openModal1() {
     set1Open(true);
@@ -450,7 +453,7 @@ export default function HomePage() {
     };
 
     updateTotalBalance();
-    localStorage.setItem('balance', updatedBalance);
+    localStorage.setItem('balance', balance + updatedBalance);
   }
 
   function handleEventClick(event) {
@@ -652,9 +655,7 @@ export default function HomePage() {
       axios.get(`http://localhost:5000/get_balance/${username}`)
         .then(res => {
           if (res.data) {
-            // Update the state by adding all formatted expenses to the allExpenses array
             setBalance(res.data.balance);
-
           }
         })
         .catch(err => console.error('Error fetching expenses:', err));
@@ -675,6 +676,20 @@ export default function HomePage() {
     }
   }, [username, currentMonthDigit, currentYear]);
 
+  useEffect(() => {
+    if (username) {
+      axios.get(`http://localhost:5000/get_budget_info/${username}`)
+        .then(res => {
+          if (res.data) {
+            const { monthlySavings, monthlyEssentials, monthlySpending } = res.data;
+            setSavingPercentage(monthlySavings);
+            setEssentialPercentage(monthlyEssentials);
+            setSpendingPercentage(monthlySpending);
+          }
+        })
+        .catch(err => console.error('Error fetching expenses:', err));
+    }
+  }, [username]);
 
 
 
@@ -721,6 +736,11 @@ export default function HomePage() {
 
             <div className="widget">
               <h2>Monthly Budget</h2>
+              <p1>
+                Savings: <span style={{ color: 'purple' }}>{savingpercentage * 100}%</span>    
+                Essentials: <span style={{ color: 'purple' }}>{essentialpercentage * 100}%</span>    
+                Spending: <span style={{ color: 'purple' }}>{spendingpercentage * 100}%</span>
+              </p1>
               <p>You have ${expectedBalance.toFixed(2)} left</p>
               <progress className="progress-bar" max={balance.toFixed(2)} value={(balance - expectedBalance).toFixed(2)} />
               <table className="budget">
@@ -749,8 +769,8 @@ export default function HomePage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="spent">${spending.toFixed(2)}</td>
-                    <td className="spent">${essential.toFixed(2)}</td>
+                    <td className="spent">${spending/*.toFixed(2) ERROR HERE*/}</td>
+                    <td className="spent">${essential/*.toFixed(2) ERROR HERE*/}</td>
                   </tr>
                 </tbody>
               </table>
