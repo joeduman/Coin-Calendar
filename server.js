@@ -405,9 +405,8 @@ app.post('/api/recurring', (req, res) => {
 //Option 2: Savings = 0.2; Essentials = 0.5; Spending = 0.3;
 //Option 3: Savings = 0.2; Essentials = 0.6; Spending = 0.2;
 //Option 4: Savings = 0.1; Essentials = 0.4; Spending = 0.5;
-app.put('api/updateBudget', (req, res) => {
+app.put('/updateBudget', (req, res) => {
     const { accountID, selectedBudget } = req.body;
-
     let Savings, Essentials, Spending;
 
     if (selectedBudget === "Option 2") {
@@ -426,11 +425,10 @@ app.put('api/updateBudget', (req, res) => {
 
     const budgetPlan = {
         accountID,
-        totalBalance,
         monthlySavings: Savings,
         monthlyEssentials: Essentials,
         monthlySpending: Spending,
-        frequency
+        frequency: 'monthly'
     };
 
     const update = "UPDATE `budget-info` SET ? WHERE accountID = ?"
@@ -737,6 +735,40 @@ app.get('/get_balance/:username', (req, res) => {
     });
   });
 });
+
+app.get('/get_budget_info/:username', (req, res) => {
+  const { username } = req.params;
+
+  // First, find the user's accountID
+  pool.query('SELECT accountID FROM Account WHERE username = ?', [username], (err, userResults) => {
+    if (err) {
+      console.error('Error finding user:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    const accountID = userResults[0].accountID;
+
+    // Fetch the totalBalance based on the accountID
+    pool.query('SELECT monthlySavings, monthlyEssentials, monthlySpending FROM `Budget-Info` WHERE accountID = ?', [accountID], (error, budgetResults) => {
+      if (error) {
+        console.error('Error fetching budget info:', error);
+        return res.status(500).json({ error: 'Error fetching budget info' });
+      }
+
+      if (budgetResults.length === 0) {
+        return res.status(404).json({ error: 'Budget info not found' });
+      }
+
+      const { monthlySavings, monthlyEssentials, monthlySpending } = budgetResults[0];
+
+      res.status(200).json({ monthlySavings, monthlyEssentials, monthlySpending });
+    });
+  });
+});
+
 
 app.get('/monthlySpent/:username/:currentMonthDigit/:currentYear', (req, res) => {
   const { username, currentMonthDigit, currentYear } = req.params;
