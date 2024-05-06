@@ -201,9 +201,12 @@ h3{
 }
 
 .event-details {
-    /* margin-right: 40rem;
-    margin-top: 30rem; */
-    width: 25vw;
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    margin-right: auto;
+    margin-top: auto;
+    width: 15vw;
     padding: 20px;
     background-color: #fff;
     border-radius: 5px;
