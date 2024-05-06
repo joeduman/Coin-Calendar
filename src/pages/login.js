@@ -13,6 +13,7 @@ export default function LoginPage() {
     const [error, setError] = useState('');
 
     const handleSubmit = async (event) => {
+        event.preventDefault();
         if (!username || !password) {
             alert('Please fill in all fields');
             return;
