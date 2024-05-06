@@ -24,6 +24,7 @@
     padding-top: 1rem;
     padding-left: 2rem;
     font-size: 2rem;
+    overflow-y: auto;
 }
 
 .column {
