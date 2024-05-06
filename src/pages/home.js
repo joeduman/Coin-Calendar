@@ -77,7 +77,7 @@ export default function HomePage() {
   //EXPENSE
   const [newExpense, setNewExpense] = useState({
     name: "",
-    category: "",
+    category: "Essential",
     date: "",
     cost: "",
     expenseID: null
@@ -86,7 +86,7 @@ export default function HomePage() {
   //RECURRING-BILL
   const [newRecur, setNewRecurring] = useState({
     name: "",
-    category: "",
+    category: "Essential",
     date: "",
     cost: "",
     frequency: "",
@@ -103,36 +103,37 @@ export default function HomePage() {
   const [username, setUsername] = useState('');
   const [accountID, setAccountID] = useState('');
 
+    /////////GET ACCOUNTID FOR CREATING EVENTS AND EXPENSES
+    useEffect(() => {
+      if (username) {
+        const fetchAccountID = async () => {
+          try { 
+            const response = await fetch(`http://localhost:5000/api/users/accountID?username=${username}`);
+            if (response.ok) {
+              const data = await response.json();
+              setAccountID(data.accountID);
+            } else {
+              console.error('Error fetching accountID:', response.statusText);
+            }
+          } catch (error) {
+            console.error('Error fetching accountID:', error);
+          }
+        };
+  
+        fetchAccountID();
+      }
+    }, [username]);
+    
   useEffect(() => {
     //Fetch username from local storage
     const storedUsername = localStorage.getItem('username');
     setUsername(storedUsername);
+    
   }, []);
 
-  /////////GET ACCOUNTID FOR CREATING EVENTS AND EXPENSES
-  useEffect(() => {
-    if (username) {
-      const fetchAccountID = async () => {
-        try { 
-          const response = await fetch(`http://localhost:5000/api/users/accountID?username=${username}`);
-          if (response.ok) {
-            const data = await response.json();
-            setAccountID(data.accountID);
-          } else {
-            console.error('Error fetching accountID:', response.statusText);
-          }
-        } catch (error) {
-          console.error('Error fetching accountID:', error);
-        }
-      };
-
-      fetchAccountID();
-    }
-  }, [username]);
-
-  useEffect(() => {
-    setExpectedBalance(balance);
-  }, [balance]);
+  /*useEffect(() => {
+    setBalance(balance);
+  }, [balance]);*/
 
   useEffect(() => {
     const totalCost = allExpenses.reduce((total, expense) => {
@@ -304,7 +305,7 @@ export default function HomePage() {
       // Reset the newExpense state
       setNewExpense({
         name: "",
-        category: "",
+        category: "Essential",
         date: "",
         cost: "",
         expenseID: null
@@ -394,7 +395,20 @@ export default function HomePage() {
   }
 
   function handleUpdateBalance() {
-    setBalance(updatedBalance);
+    setBalance(balance + updatedBalance);
+    const updateTotalBalance = async () => {
+      try {
+        await axios.put(`http://localhost:5000/balance`, {
+          accountID,
+          totalBalance: balance + updatedBalance
+        });
+        console.log("Total balance updated successfully.");
+      } catch (error) {
+        console.error("Error updating total balance:", error);
+      }
+    };
+
+    updateTotalBalance();
     localStorage.setItem('balance', updatedBalance);
   }
 
@@ -592,6 +606,19 @@ export default function HomePage() {
     }
   }, [username]);
 
+  useEffect(() => {
+    if (username) {
+      axios.get(`http://localhost:5000/get_balance/${username}`)
+        .then(res => {
+          if (res.data) {
+            // Update the state by adding all formatted expenses to the allExpenses array
+            setBalance(res.data.balance);
+
+          }
+        })
+        .catch(err => console.error('Error fetching expenses:', err));
+    }
+  }, [username]);
 
 
 
