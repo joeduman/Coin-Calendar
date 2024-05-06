@@ -175,16 +175,16 @@ export default function HomePage() {
     
   }, []);
 
-  /*useEffect(() => {
-    setBalance(balance);
-  }, [balance]);*/
-
   useEffect(() => {
-    const totalCost = allExpenses.reduce((total, expense) => {
+    const totalCostExpenses = allExpenses.reduce((total, expense) => {
       return total + parseFloat(expense.cost);
     }, 0);
-    setExpectedBalance(balance - totalCost);
-  }, [balance, allExpenses]);
+    const totalCostRecurringBills = allRecurring.reduce((total, recurring) => {
+      return total + parseFloat(recurring.cost);
+    }, 0);
+
+    setExpectedBalance(balance - totalCostExpenses - totalCostRecurringBills);
+  }, [balance, allExpenses, allRecurring]);
 
   function formatDateSQL(date) {
     // Extract the year, month, day, hours, minutes, and seconds from the date object
