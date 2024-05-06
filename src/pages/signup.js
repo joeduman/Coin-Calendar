@@ -11,7 +11,8 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (event) => {
+    event.preventDefault();
     // Check if password and confirm password match
     // Add any additional validation logic if needed
     if (!username || !password || !confirmPassword || !fname || !lname || !email || !phone) {
