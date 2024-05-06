@@ -54,8 +54,9 @@ const DashboardPage = () => {
         if (username) {
             axios.get("http://localhost:5000/recurring/" + username)
                 .then(res => {
-                    console.log(res)
-                    setRecurring(res.data[0]);
+                    res.data.forEach(recurring => {
+                        setRecurring(prevRecurrings => [...prevRecurrings, recurring]);
+                    });
                 })
                 .catch(err => console.log(err))
         }
@@ -85,19 +86,21 @@ useEffect(() => {
 
 const handleBudgetChange = async (e) => {
     setSelectedBudget(e.target.value);
-    if (e.target.value !== 'Option 1') {
-        try {
-            await axios.post('http://localhost:5000/api/updateBudget', {
-                accountID,
-                selectedBudget
-            });
-        } catch (error) {
-            console.error('Error updating budget plan:', error);
-            alert('Error updating budget. Please try again.');
-        }
+};
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        await axios.put('http://localhost:5000/updateBudget', {
+            accountID,
+            selectedBudget
+        });
+        alert('Budget changed successfully!');
+    } catch (error) {
+        console.error('Error updating budget plan:', error);
+        alert('Error updating budget. Please try again.');
     }
 };
-    
+   
     return (
         <div>
             <nav className="navbar">
@@ -117,50 +120,60 @@ const handleBudgetChange = async (e) => {
                         <div className="budgetOptions">
                             <h1 className="budgetHead">Select Budget Plan</h1>
                             <h2 className="budgetLabel">Essentials/Spending/Saving</h2>
-                            <select value={selectedBudget} onChange={handleBudgetChange}>
-                                <option value='Option 1'>None</option>
-                                <option value="Option 2">50% / 30% / 20%</option>
-                                <option value="Option 3">60% / 20% / 20%</option>
-                                <option value="Option 4">40% / 50% / 10%</option>
-                            </select>
-                            {selectedBudget === 'Option 2' && <div>
-                                <h1 className="budgetdesc">50 / 30 / 20 Split</h1>
-                                <p className="budgetdesc">The 50/30/20 budgeting plan is a general rule of thumb perfect for those new to budgeting. It allocates
-                                    50% of income to essentials like rent, food, bills, etc., 30% to a spending budget for any personal desires
-                                    or outings, and 20% to savings for the future or investments.
-                                </p>
-                                <br />
-                                <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
-                                <p className="budgetdesc">Essentials (50%) - ${balance * 0.5}</p>
-                                <p className="budgetdesc">Spending (30%) - ${balance * 0.3}</p>
-                                <p className="budgetdesc">Savings (20%) - ${balance * 0.2}</p>
-                            </div>}
-                            {selectedBudget === 'Option 3' && <div>
-                                <h1 className="budgetdesc">60 / 10 / 30 Split</h1>
-                                <p className="budgetdesc">The 60/10/30 budgeting plan is designed to focus slightly more on essential spending and savings rather than
-                                    personal spending. It is useful for those with higher costs of living as well as those who tend to be more frugal
-                                    with their non-essential spending, as it only allocates 10% of income to 'wants'.
-                                </p>
-                                <br />
-                                <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
-                                <p className="budgetdesc">Essentials (60%) - ${balance * 0.6}</p>
-                                <p className="budgetdesc">Spending (10%) - ${balance * 0.1}</p>
-                                <p className="budgetdesc">Savings (30%) - ${balance * 0.3}</p>
-                            </div>}
-                            {selectedBudget === 'Option 4' && <div>
-                                <h1 className="budgetdesc">40 / 50 / 10 Split</h1>
-                                <p className="budgetdesc">The 40/50/10 budget plan is geared toward anyone who wishes to dedicate more of their paycheck to their lifestyle.
-                                    It draws a few extra funds from both savings and essentials to allocate to personal spending. This is potentially useful
-                                    to those with multiple sources of income or an excess of funds in general.
-                                </p>
-                                <br />
-                                <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
-                                <p className="budgetdesc">Essentials (40%) - ${balance * 0.4}</p>
-                                <p className="budgetdesc">Spending (50%) - ${balance * 0.5}</p>
-                                <p className="budgetdesc">Savings (10%) - ${balance * 0.1}</p>
-                            </div>}
+                            <form onSubmit={handleSubmit}>
+                                <select value={selectedBudget} onChange={handleBudgetChange}>
+                                    <option value='Option 1'>None</option>
+                                    <option value="Option 2">50% / 30% / 20%</option>
+                                    <option value="Option 3">60% / 20% / 20%</option>
+                                    <option value="Option 4">40% / 50% / 10%</option>
+                                </select>
+                                <button type="submit" style={{ display: selectedBudget === 'Option 1' ? 'none' : 'inline-block', marginLeft: '10px' }}>Submit</button>
+                            </form>
+                            {selectedBudget === 'Option 2' && (
+                                <div>
+                                    <h1 className="budgetdesc">50 / 30 / 20 Split</h1>
+                                    <p className="budgetdesc">The 50/30/20 budgeting plan is a general rule of thumb perfect for those new to budgeting. It allocates
+                                        50% of income to essentials like rent, food, bills, etc., 30% to a spending budget for any personal desires
+                                        or outings, and 20% to savings for the future or investments.
+                                    </p>
+                                    <br />
+                                    <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
+                                    <p className="budgetdesc">Essentials (50%) - ${(balance * 0.5).toFixed(2)}</p>
+                                    <p className="budgetdesc">Spending (30%) - ${(balance * 0.3).toFixed(2)}</p>
+                                    <p className="budgetdesc">Savings (20%) - ${(balance * 0.2).toFixed(2)}</p>
+                                </div>
+                            )}
+                            {selectedBudget === 'Option 3' && (
+                                <div>
+                                    <h1 className="budgetdesc">60 / 10 / 30 Split</h1>
+                                    <p className="budgetdesc">The 60/10/30 budgeting plan is designed to focus slightly more on essential spending and savings rather than
+                                        personal spending. It is useful for those with higher costs of living as well as those who tend to be more frugal
+                                        with their non-essential spending, as it only allocates 10% of income to 'wants'.
+                                    </p>
+                                    <br />
+                                    <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
+                                    <p className="budgetdesc">Essentials (60%) - ${(balance * 0.6).toFixed(2)}</p>
+                                    <p className="budgetdesc">Spending (10%) - ${(balance * 0.1).toFixed(2)}</p>
+                                    <p className="budgetdesc">Savings (30%) - ${(balance * 0.3).toFixed(2)}</p>
+                                </div>
+                            )}
+                            {selectedBudget === 'Option 4' && (
+                                <div>
+                                    <h1 className="budgetdesc">40 / 50 / 10 Split</h1>
+                                    <p className="budgetdesc">The 40/50/10 budget plan is geared toward anyone who wishes to dedicate more of their paycheck to their lifestyle.
+                                        It draws a few extra funds from both savings and essentials to allocate to personal spending. This is potentially useful
+                                        to those with multiple sources of income or an excess of funds in general.
+                                    </p>
+                                    <br />
+                                    <h2 className="budgetdesc">Current Allocation of ${balance}</h2>
+                                    <p className="budgetdesc">Essentials (40%) - ${(balance * 0.4).toFixed(2)}</p>
+                                    <p className="budgetdesc">Spending (50%) - ${(balance * 0.5).toFixed(2)}</p>
+                                    <p className="budgetdesc">Savings (10%) - ${(balance * 0.1).toFixed(2)}</p>
+                                </div>
+                            )}
                         </div>
                     </div>
+
                     <div class="quadrant">Recent Transactions
 
                         <table className="quadrantTable">
@@ -210,13 +223,15 @@ const handleBudgetChange = async (e) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {recurring ? (
-                                    <tr>
-                                        <td>{recurring.billName}</td>
-                                        <td>{recurring.frequency}</td>
-                                        <td>{recurring.renewDay}</td>
-                                        <td>${recurring.cost}</td>
-                                    </tr>
+                                {recurring.length > 0 ? (
+                                    recurring.map((recurringItem, index) => (
+                                        <tr key={index}>
+                                            <td>{recurringItem.billName}</td>
+                                            <td>{recurringItem.frequency}</td>
+                                            <td>{recurringItem.renewDay}</td>
+                                            <td>${recurringItem.cost}</td>
+                                        </tr>
+                                    ))
                                 ) : (
                                     <tr>
                                         <td colSpan="1">None</td>
@@ -224,8 +239,6 @@ const handleBudgetChange = async (e) => {
                                 )}
                             </tbody>
                         </table>
-
-
                     </div>
 
                     <div class="quadrant">All Upcoming Events
