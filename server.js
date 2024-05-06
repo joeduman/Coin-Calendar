@@ -75,10 +75,10 @@ app.post('/signup', async (req, res) => {
         // Insert budget info for the new user
         const budgetInfo = {
           accountID: nextAccountID,
-          totalBalance: 200,
-          monthlySavings: 0.5,
-          monthlyEssentials: 0.3,
-          monthlySpending: 0.2,
+          totalBalance: 200.0,
+          monthlySavings: 0.2,
+          monthlyEssentials: 0.5,
+          monthlySpending: 0.3,
           frequency: 'monthly'
         };
 
@@ -401,6 +401,10 @@ app.post('/api/recurring', (req, res) => {
   });
 });
 
+
+//Option 2: Savings = 0.2; Essentials = 0.5; Spending = 0.3;
+//Option 3: Savings = 0.2; Essentials = 0.6; Spending = 0.2;
+//Option 4: Savings = 0.1; Essentials = 0.4; Spending = 0.5;
 app.put('api/updateBudget', (req, res) => {
     const { accountID, selectedBudget } = req.body;
 
@@ -734,6 +738,47 @@ app.get('/get_balance/:username', (req, res) => {
   });
 });
 
+app.get('/monthlySpent/:username/:currentMonthDigit/:currentYear', (req, res) => {
+  const { username, currentMonthDigit, currentYear } = req.params;
+
+  // First, find the user's accountID
+  pool.query('SELECT accountID FROM Account WHERE username = ?', [username], (err, userResults) => {
+    if (err) {
+      console.error('Error finding user:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    const accountID = userResults[0].accountID;
+
+    // const beginningMonth = new Date(currentYear, currentMonthDigit, 1); // Set to the first day of the specified month
+    // const endMonth = new Date(currentYear, currentMonthDigit, 0); // Set to the last day of the specified month
+
+    const beginningOfMonth = new Date(currentYear, currentMonthDigit, 1); // Months are zero-based, so subtract 1
+    //const endOfMonth = new Date(parseInt(currentYear), parseInt(currentMonthDigit), 0);
+    const endOfMonth = new Date(currentYear, currentMonthDigit+1, 0);
+    pool.query('SELECT SUM(cost) AS totalExpense FROM Expense WHERE accountID = ? AND category = "Essential" AND date >= ? AND date <= ?', [accountID, beginningOfMonth, endOfMonth], (error, spentResults) => {
+      if (error) {
+        console.error('Error fetching spentResults:', error);
+        return res.status(500).json({ error: 'Error fetching spentResults' });
+      }
+
+      if (spentResults.length === 0) {
+        return res.status(404).json({ error: 'Account not found' });
+      }
+      const spentessential = spentResults[0].totalExpense;
+      const empty = 0;
+      if(spentessential){
+        res.status(200).json({ spentessential });
+      }else{
+        res.status(200).json({ empty });
+      }
+      
+    });
+  });
+});
 
 
 

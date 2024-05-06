@@ -38,6 +38,11 @@ export default function HomePage() {
   const [modal2Open, set2Open] = useState(false);
   const [modal3Open, set3Open] = useState(false);
   const [modal4Open, set4Open] = useState(false);
+  const [currentMonth,setCurrentMonth] = useState('');
+  const [currentMonthDigit,setCurrentMonthDigit] = useState(0);
+  const [currentYear,setCurrentYear] = useState(0);
+  const [spending,setSpending] = useState(0);
+  const [essential,setEssential] = useState(0);
 
   function openModal1() {
     set1Open(true);
@@ -63,6 +68,42 @@ export default function HomePage() {
   function closeModal4() {
     set4Open(false);
   }
+
+  const getCurrentMonthAndYear = (date) => {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const currentMonth = months[date.getMonth()];
+    const currentMonthDigit = date.getMonth();
+    const currentYear = date.getFullYear();
+    return { currentMonth, currentMonthDigit, currentYear };
+  };
+
+  useEffect(() => {
+    // Set the current month and year when the component mounts
+    const currentDate = new Date();
+    const { currentMonth, currentMonthDigit, currentYear } = getCurrentMonthAndYear(currentDate);
+    setCurrentMonth(currentMonth);
+    setCurrentMonthDigit(currentMonthDigit);
+    setCurrentYear(currentYear);
+  }, []);
+
+  const handleNavigate = (newDate) => {
+    const { currentMonth, currentYear } = getCurrentMonthAndYear(newDate);
+    setCurrentMonth(currentMonth);
+    setCurrentMonthDigit(currentMonthDigit);
+    setCurrentYear(currentYear);
+    if (username && currentMonthDigit && currentYear) {
+      axios.get(`http://localhost:5000/monthlySpent/${username}/${currentMonthDigit}/${currentYear}`)
+        .then(res => {
+          if (res.data) {
+            // Update the state by adding all formatted expenses to the allExpenses array
+            console.log(res.data);
+            setEssential(res.data.spentessential);
+          }
+        })
+        .catch(err => console.error('Error fetching expenses:', err));
+    }
+  };
+  
 
   //EVENT
   const [newEvent, setNewEvent] = useState({
@@ -620,6 +661,21 @@ export default function HomePage() {
     }
   }, [username]);
 
+  useEffect(() => {
+    if (username && currentMonthDigit && currentYear) {
+      axios.get(`http://localhost:5000/monthlySpent/${username}/${currentMonthDigit}/${currentYear}`)
+        .then(res => {
+          if (res.data) {
+            // Update the state by adding all formatted expenses to the allExpenses array
+            console.log(res.data);
+            setEssential(res.data.spentessential);
+          }
+        })
+        .catch(err => console.error('Error fetching expenses:', err));
+    }
+  }, [username, currentMonthDigit, currentYear]);
+
+
 
 
   return (
@@ -650,6 +706,7 @@ export default function HomePage() {
               style={{ height: 750 }}
               onSelectEvent={handleEventClick}
               eventPropGetter={eventStyleGetter}
+              onNavigate={handleNavigate}
             />
           </div>
 
@@ -659,7 +716,7 @@ export default function HomePage() {
 
             <div className="widget" id="totalsavings">
                 <h2>Total Savings</h2>
-                <p>$100</p>
+                <p>${balance.toFixed(2)}</p>
               </div>
 
             <div className="widget">
@@ -682,19 +739,18 @@ export default function HomePage() {
               </table>
             </div>
             <div className="widget" id="balances">
-              <h2>Monthly Balances</h2>
+              <h2>{currentMonth} {currentYear}</h2>
               <table className="budget">
                 <thead>
                   <tr>
-                    <th>savings:</th>
                     <th>spending:</th>
                     <th>essential:</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="spent">${(balance - expectedBalance)}</td>
-                    <td className="remain">${expectedBalance}</td>
+                    <td className="spent">${spending.toFixed(2)}</td>
+                    <td className="spent">${essential.toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
