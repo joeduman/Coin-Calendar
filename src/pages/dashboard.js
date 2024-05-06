@@ -11,6 +11,7 @@ const DashboardPage = () => {
     const [event, setEvents] = useState([]);
     const [recurring, setRecurring] = useState([]);
     const [username, setUsername] = useState('');
+    const [accountID, setAccountID] = useState('');
     const [balance, setBalance] = useState(0)
 
 
@@ -60,9 +61,6 @@ const DashboardPage = () => {
         }
     }, [username]);
     const [selectedBudget, setSelectedBudget] = useState('Option 1');
-    const handleBudgetChange = (e) => {
-        setSelectedBudget(e.target.value);
-    };
 
 /////////GET ACCOUNTID
 useEffect(() => {
