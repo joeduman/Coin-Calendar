@@ -217,7 +217,8 @@ app.post('/changepass', (req, res) => {
 
   // Update the password for the given username in the database
   const updateQuery = 'UPDATE Account SET password = ? WHERE username = ?';
-  pool.query(updateQuery, [newPassword, username], (error, results) => {
+  const hashedPassword  = passcrypto.createHmac('sha256', encryptionKey).update(newPassword).digest('hex');
+  pool.query(updateQuery, [hashedPassword, username], (error, results) => {
     if (error) {
       console.error('Error updating password:', error);
       // Send an error response
@@ -608,9 +609,6 @@ app.put('/userupdate/:username', (req, res) => {
   const { username } = req.params;
   const { fname, lname, email, phone, password, newpassword } = req.body;
 
-  console.log(newpassword);
-  // Assuming you have a database connection pool named 'pool'
-
   // First, check if the user exists
   pool.query('SELECT * FROM Account WHERE username = ?', [username], (err, userResults) => {
     if (err) {
@@ -655,8 +653,9 @@ app.put('/userupdate/:username', (req, res) => {
 
     // Check if newpassword is provided and not null
     if (newpassword != undefined) {
+      const hashedPassword  = passcrypto.createHmac('sha256', encryptionKey).update(newpassword).digest('hex');
       updateFields.push('password = ?');
-      updateValues.push(newpassword);
+      updateValues.push(hashedPassword);
     }
 
     if (updateFields.length === 0) {
@@ -685,7 +684,55 @@ app.put('/userupdate/:username', (req, res) => {
 });
 
 
+app.put('/balance', async (req, res) => {
+  const { accountID, totalBalance } = req.body;
+  const updateBalanceQuery = `UPDATE \`Budget-Info\` SET totalBalance = ? WHERE accountID = ?`;
 
+  pool.query(updateBalanceQuery, [totalBalance, accountID], (error, results) => {
+    if (error) {
+      console.error('Error updating total balance:', error);
+      return res.status(500).json({ error: 'Error updating total balance' });
+    }
+
+    if (results.affectedRows > 0) {
+      return res.status(200).json({ success: true, message: 'Total balance updated successfully' });
+    } else {
+      return res.status(404).json({ success: false, error: 'Account not found or balance wasnt changed' });
+    }
+  });
+});
+
+app.get('/get_balance/:username', (req, res) => {
+  const { username } = req.params;
+
+  // First, find the user's accountID
+  pool.query('SELECT accountID FROM Account WHERE username = ?', [username], (err, userResults) => {
+    if (err) {
+      console.error('Error finding user:', err);
+      return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    const accountID = userResults[0].accountID;
+
+    // Fetch the totalBalance based on the accountID
+    pool.query('SELECT totalBalance FROM `Budget-Info` WHERE accountID = ?', [accountID], (error, balanceResults) => {
+      if (error) {
+        console.error('Error fetching balance:', error);
+        return res.status(500).json({ error: 'Error fetching balance' });
+      }
+
+      if (balanceResults.length === 0) {
+        return res.status(404).json({ error: 'Account not found' });
+      }
+
+      const balance = balanceResults[0].totalBalance;
+      res.status(200).json({ balance });
+    });
+  });
+});
 
 
 
