@@ -124,10 +124,10 @@ const handleSubmit = async (e) => {
                                 <select value={selectedBudget} onChange={handleBudgetChange}>
                                     <option value='Option 1'>None</option>
                                     <option value="Option 2">50% / 30% / 20%</option>
-                                    <option value="Option 3">60% / 20% / 20%</option>
+                                    <option value="Option 3">60% / 10% / 30%</option>
                                     <option value="Option 4">40% / 50% / 10%</option>
                                 </select>
-                                <button type="submit" style={{ display: selectedBudget === 'Option 1' ? 'none' : 'inline-block', marginLeft: '10px' }}>Submit</button>
+                                <button type="submit" style={{ display: selectedBudget === 'Option 1' ? 'none' : 'inline-block', marginLeft: '10px' }}>Save</button>
                             </form>
                             {selectedBudget === 'Option 2' && (
                                 <div>
