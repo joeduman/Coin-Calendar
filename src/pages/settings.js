@@ -50,6 +50,10 @@ export default function SettingsPage() {
         }
         if (inputs.newpassword){
           if (inputs.newpassword != null) {
+            if(inputs.newpassword.length < 4) {
+                alert('Please make your new password longer than 4 characters');
+                return;
+            }
             newpassword = inputs.newpassword
           }
         }
