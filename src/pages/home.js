@@ -553,6 +553,11 @@ export default function HomePage() {
           // Remove the expense from the allExpenses array
           const updatedRecurring = allRecurring.filter(recur => recur.recurID !== recurToRemove.recurID);
           setAllRecurring(updatedRecurring);
+
+          // Update the expected balance by subtracting the cost of the removed reucrring bill
+          const updatedExpectedBalance = expectedBalance + parseFloat(recurToRemove.cost);
+          setExpectedBalance(updatedExpectedBalance);
+          
           // Close the event details panel
           setSelectedEvent(null);
           // Remove the selected event from the allEvents array
