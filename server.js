@@ -75,7 +75,7 @@ app.post('/signup', async (req, res) => {
         // Insert budget info for the new user
         const budgetInfo = {
           accountID: nextAccountID,
-          totalBalance: 200.0,
+          totalBalance: 0.0,
           monthlySavings: 0.2,
           monthlyEssentials: 0.5,
           monthlySpending: 0.3,
