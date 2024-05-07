@@ -21,51 +21,78 @@
     margin-right: auto;
     margin-top: 1rem;
     margin-bottom: 2rem;
-    box-shadow: 0 0 10px rgba(58, 58, 58, 0.2); /* Add shadow */
+    box-shadow: 0 0 10px rgba(58, 58, 58, 0.2);
+    /* Add shadow */
 }
 
-.widget p{
+.widget p {
     margin-top: 50px;
 }
-.widget[id="totalsavings"] p{
+
+.widget[id="totalsavings"] p {
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
 
 .event-list-container {
-    height: 200px; /* Set a fixed height for the container to enable scrolling */
-    overflow-y: auto; /* Enable vertical scrolling */
+    height: 200px;
+    /* Set a fixed height for the container to enable scrolling */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
     padding: auto;
-  }
+}
 
-.event-list-container p{
+.event-list-container p {
     margin-top: 10px;
 }
-  
-  .event-list-container::-webkit-scrollbar {
-    width: 12px; /* Width of the scrollbar */
-  }
-  
-  .event-list-container::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Track color */
-    border-radius: 100px;
-  }
-  
-  .event-list-container::-webkit-scrollbar-thumb {
-    background: #888; /* Thumb color */
-    border-radius: 100px;
-  }
-  
-  .event-list-container::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Thumb color on hover */
-  }
-  
 
-h3{
+.event-list-container::-webkit-scrollbar {
+    width: 12px;
+    /* Width of the scrollbar */
+}
+
+.event-list-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Track color */
+    border-radius: 100px;
+}
+
+.event-list-container::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Thumb color */
+    border-radius: 100px;
+}
+
+.event-list-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Thumb color on hover */
+}
+
+
+h3 {
     margin-top: 1rem;
 }
 
-.rightside{
+.widget p[id="percent"] {
+    margin-top: 0px;
+}
+
+.reset {
+    font-size: calc(0.5vw + 0.5vh);
+    border: none;
+    background-color: #e6e6e6;
+    cursor: pointer;
+}
+
+.reset:hover {
+    font-size: calc(0.5vw + 0.5vh);
+    color: red;
+    border: none;
+    background-color: #e6e6e6;
+    transition: background-color 0.5s ease;
+}
+
+.rightside {
     border-radius: 15px;
     width: 25rem;
     height: 15rem;
@@ -78,14 +105,15 @@ h3{
 }
 
 .budget {
-    border-spacing: 1rem; /* Adjust the spacing between rows */
+    border-spacing: 1rem;
+    /* Adjust the spacing between rows */
 }
 
-.budget .spent{
+.budget .spent {
     color: red;
 }
 
-.budget .remain{
+.budget .remain {
     color: green;
 }
 
@@ -109,26 +137,36 @@ h3{
     color: white;
 }
 
-.addButtonModal{
-    width: 30%; /* Set the width to 30% of the viewport width */
-    height: auto; /* Let the height adjust based on content */
-    max-height: 30%; /* Set the max-height to 30% of the viewport height */
-    margin: auto; /* Center the modal vertically */
-    position: absolute; /* Position the modal absolutely */
-    left: 0; /* Align the left edge to the left of the viewport */
-    right: 0; /* Align the right edge to the right of the viewport */
-    margin-left: auto; /* Center the modal horizontally */
-    overflow: auto; /* Allow content scrolling if needed */
+.addButtonModal {
+    width: 30%;
+    /* Set the width to 30% of the viewport width */
+    height: auto;
+    /* Let the height adjust based on content */
+    max-height: 30%;
+    /* Set the max-height to 30% of the viewport height */
+    margin: auto;
+    /* Center the modal vertically */
+    position: absolute;
+    /* Position the modal absolutely */
+    left: 0;
+    /* Align the left edge to the left of the viewport */
+    right: 0;
+    /* Align the right edge to the right of the viewport */
+    margin-left: auto;
+    /* Center the modal horizontally */
+    overflow: auto;
+    /* Allow content scrolling if needed */
     opacity: 50%;
 }
 
 .hover-tooltip {
     margin-left: 1rem;
     font-size: 20px;
-    cursor: help; /* Changes the cursor to a question mark*/
+    cursor: help;
+    /* Changes the cursor to a question mark*/
 }
 
-.rbc-header{
+.rbc-header {
     background-color: #539ADB;
     padding: 0.5rem;
     font-size: 20px;
@@ -153,7 +191,7 @@ h3{
 
 /* Change color of month/week/day buttons */
 .rbc-toolbar button {
-    background-color: #539ADB; 
+    background-color: #539ADB;
     color: white;
     border-color: #539ADB;
 }
@@ -185,9 +223,9 @@ h3{
     margin-top: -2.5rem;
     margin-right: 4px;
     z-index: 0;
-} 
+}
 
-.divBar{
+.divBar {
     display: flex;
     background-color: #909090;
     opacity: 50%;
@@ -217,24 +255,30 @@ h3{
     margin-bottom: 10px;
 }
 
-.date-pickers > * {
+.date-pickers>* {
     margin-right: 10px;
 }
 
 .openAddEventBtn {
-    position: relative; /* Ensure the button is positioned relatively */
-    padding: 0; /* Remove padding to ensure the button is a perfect circle */
+    position: relative;
+    /* Ensure the button is positioned relatively */
+    padding: 0;
+    /* Remove padding to ensure the button is a perfect circle */
     font-size: calc(1.5vw + 1.5vh);
     background-color: #539ADB;
     color: white;
     border: none;
     width: 4vw;
     height: 4vw;
-    border-radius: 50%; /* Make the button a circle */
+    border-radius: 50%;
+    /* Make the button a circle */
     transition: background-color 0.5s ease;
-    display: flex; /* Use flexbox for alignment */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    display: flex;
+    /* Use flexbox for alignment */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
 }
 
 .openAddEventBtn::after {
@@ -244,71 +288,127 @@ h3{
 }
 
 .openAddEventBtn::before {
-    content: "Event"; /* Text to display underneath the Add Event button */
-    white-space: nowrap; /* Prevent wrapping to keep text in one line */
-    display: block; /* Ensure the text appears on a new line */
-    margin-top: 0.5rem; /* Adjust the distance between the button and the text */
-    text-align: center; /* Center the text */
-    font-size: 14px; /* Adjust the font size */
-    color: white; /* Adjust the color */
-    position: absolute; /* Position the text relative to the button */
-    bottom: -2rem; /* Position the text below the button */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Center horizontally */
-    padding: 0.2rem 0.5rem; /* Add padding to create space around the text */
-    background-color: #539ADB; /* Set background color for the box */
-    border-radius: 5px; /* Add rounded corners to the box */
+    content: "Event";
+    /* Text to display underneath the Add Event button */
+    white-space: nowrap;
+    /* Prevent wrapping to keep text in one line */
+    display: block;
+    /* Ensure the text appears on a new line */
+    margin-top: 0.5rem;
+    /* Adjust the distance between the button and the text */
+    text-align: center;
+    /* Center the text */
+    font-size: 14px;
+    /* Adjust the font size */
+    color: white;
+    /* Adjust the color */
+    position: absolute;
+    /* Position the text relative to the button */
+    bottom: -2rem;
+    /* Position the text below the button */
+    left: 50%;
+    /* Center horizontally */
+    transform: translateX(-50%);
+    /* Center horizontally */
+    padding: 0.2rem 0.5rem;
+    /* Add padding to create space around the text */
+    background-color: #539ADB;
+    /* Set background color for the box */
+    border-radius: 5px;
+    /* Add rounded corners to the box */
 }
 
 .openAddEventBtn[id='2']::before {
-    content: "Expense"; /* Text to display underneath the Add Event button */
-    white-space: nowrap; /* Prevent wrapping to keep text in one line */
-    display: block; /* Ensure the text appears on a new line */
-    margin-top: 0.5rem; /* Adjust the distance between the button and the text */
-    text-align: center; /* Center the text */
-    font-size: 14px; /* Adjust the font size */
-    color: white; /* Adjust the color */
-    position: absolute; /* Position the text relative to the button */
-    bottom: -2rem; /* Position the text below the button */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Center horizontally */
-    padding: 0.2rem 0.5rem; /* Add padding to create space around the text */
-    background-color: #539ADB; /* Set background color for the box */
-    border-radius: 5px; /* Add rounded corners to the box */
+    content: "Expense";
+    /* Text to display underneath the Add Event button */
+    white-space: nowrap;
+    /* Prevent wrapping to keep text in one line */
+    display: block;
+    /* Ensure the text appears on a new line */
+    margin-top: 0.5rem;
+    /* Adjust the distance between the button and the text */
+    text-align: center;
+    /* Center the text */
+    font-size: 14px;
+    /* Adjust the font size */
+    color: white;
+    /* Adjust the color */
+    position: absolute;
+    /* Position the text relative to the button */
+    bottom: -2rem;
+    /* Position the text below the button */
+    left: 50%;
+    /* Center horizontally */
+    transform: translateX(-50%);
+    /* Center horizontally */
+    padding: 0.2rem 0.5rem;
+    /* Add padding to create space around the text */
+    background-color: #539ADB;
+    /* Set background color for the box */
+    border-radius: 5px;
+    /* Add rounded corners to the box */
 }
 
 .openAddEventBtn[id='3']::before {
-    content: "Deposit"; /* Text to display underneath the Add Event button */
-    white-space: nowrap; /* Prevent wrapping to keep text in one line */
-    display: block; /* Ensure the text appears on a new line */
-    margin-top: 0.5rem; /* Adjust the distance between the button and the text */
-    text-align: center; /* Center the text */
-    font-size: 14px; /* Adjust the font size */
-    color: white; /* Adjust the color */
-    position: absolute; /* Position the text relative to the button */
-    bottom: -2rem; /* Position the text below the button */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Center horizontally */
-    padding: 0.2rem 0.5rem; /* Add padding to create space around the text */
-    background-color: #539ADB; /* Set background color for the box */
-    border-radius: 5px; /* Add rounded corners to the box */
+    content: "Deposit";
+    /* Text to display underneath the Add Event button */
+    white-space: nowrap;
+    /* Prevent wrapping to keep text in one line */
+    display: block;
+    /* Ensure the text appears on a new line */
+    margin-top: 0.5rem;
+    /* Adjust the distance between the button and the text */
+    text-align: center;
+    /* Center the text */
+    font-size: 14px;
+    /* Adjust the font size */
+    color: white;
+    /* Adjust the color */
+    position: absolute;
+    /* Position the text relative to the button */
+    bottom: -2rem;
+    /* Position the text below the button */
+    left: 50%;
+    /* Center horizontally */
+    transform: translateX(-50%);
+    /* Center horizontally */
+    padding: 0.2rem 0.5rem;
+    /* Add padding to create space around the text */
+    background-color: #539ADB;
+    /* Set background color for the box */
+    border-radius: 5px;
+    /* Add rounded corners to the box */
 }
 
 .openAddEventBtn[id='4']::before {
-    content: "Recurring Bill"; /* Text to display underneath the Add Event button */
-    white-space: nowrap; /* Prevent wrapping to keep text in one line */
-    display: block; /* Ensure the text appears on a new line */
-    margin-top: 0.5rem; /* Adjust the distance between the button and the text */
-    text-align: center; /* Center the text */
-    font-size: 14px; /* Adjust the font size */
-    color: white; /* Adjust the color */
-    position: absolute; /* Position the text relative to the button */
-    bottom: -2rem; /* Position the text below the button */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Center horizontally */
-    padding: 0.2rem 0.5rem; /* Add padding to create space around the text */
-    background-color: #539ADB; /* Set background color for the box */
-    border-radius: 5px; /* Add rounded corners to the box */
+    content: "Recurring Bill";
+    /* Text to display underneath the Add Event button */
+    white-space: nowrap;
+    /* Prevent wrapping to keep text in one line */
+    display: block;
+    /* Ensure the text appears on a new line */
+    margin-top: 0.5rem;
+    /* Adjust the distance between the button and the text */
+    text-align: center;
+    /* Center the text */
+    font-size: 14px;
+    /* Adjust the font size */
+    color: white;
+    /* Adjust the color */
+    position: absolute;
+    /* Position the text relative to the button */
+    bottom: -2rem;
+    /* Position the text below the button */
+    left: 50%;
+    /* Center horizontally */
+    transform: translateX(-50%);
+    /* Center horizontally */
+    padding: 0.2rem 0.5rem;
+    /* Add padding to create space around the text */
+    background-color: #539ADB;
+    /* Set background color for the box */
+    border-radius: 5px;
+    /* Add rounded corners to the box */
 }
 
 .openAddEventBtn:hover {
@@ -326,4 +426,3 @@ h3{
 .openAddEventBtn[id='4']:hover {
     background-color: #FFDD63;
 }
-
