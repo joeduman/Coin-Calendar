@@ -680,9 +680,9 @@ export default function HomePage() {
   useEffect(() => {
     setExpectedBalance(balance*(spendingpercentage+essentialpercentage) - spending - essential);
     if((spending+essential) > expectedBalance){
-      setSavings((balance*spendingpercentage)-(spending+essential));
+      setSavings((balance*savingpercentage)-(spending+essential));
     }else{
-      setSavings((balance*spendingpercentage));
+      setSavings((balance*savingpercentage));
     }
   }, [balance, expectedBalance, spending, essential, spendingpercentage, essentialpercentage]);
 
