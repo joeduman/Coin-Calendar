@@ -306,12 +306,32 @@ export default function HomePage() {
         cost: parseFloat(newExpense.cost),
       });
 
+
       // Update the state with the newly added expense
       expenseEvent.expenseID = response.data.expense.expenseID;
       newExpense.expenseID = response.data.expense.expenseID;
       setAllExpenses([...allExpenses, newExpense]);
       setAllEvents([...allEvents, expenseEvent]);
 
+      // Get current date
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth(); // Months are zero-based
+      const currentDay = currentDate.getDate();
+
+      // Calculate beginning and end of current month
+      const beginningOfMonth = new Date(currentYear, currentMonth, 1);
+      const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+
+      if(newExpense.date > beginningOfMonth && newExpense.date < endOfMonth){
+        if(newExpense.category == "Spending"){
+          setSpending(spending + parseFloat(newExpense.cost));
+        }
+        else if(newExpense.category == "Essential"){
+          setEssential(essential + parseFloat(newExpense.cost));
+        }
+      }
       console.log("Expense added to the database.");
 
       // Reset the newExpense state
@@ -388,6 +408,26 @@ export default function HomePage() {
       setAllRecurring([...allRecurring, newRecur]);
       setAllEvents([...allEvents, recurEvent]);
 
+      // Get current date
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth(); // Months are zero-based
+      const currentDay = currentDate.getDate();
+
+      // Calculate beginning and end of current month
+      const beginningOfMonth = new Date(currentYear, currentMonth, 1);
+      const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+
+      if(newRecur.date <= currentDay){
+        if(newRecur.category == "Spending"){
+          setSpending(spending + parseFloat(newRecur.cost));
+        }
+        else if(newRecur.category == "Essential"){
+          setEssential(essential + parseFloat(newRecur.cost));
+        }
+      }
+
       console.log("Recurring bill added to the database.");
 
       // Reset the newrecurring state
@@ -451,6 +491,15 @@ export default function HomePage() {
   }
 
   async function handleRemoveEvent() {
+    // Get current date
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth(); // Months are zero-based
+    const currentDay = currentDate.getDate();
+
+    // Calculate beginning and end of current month
+    const beginningOfMonth = new Date(currentYear, currentMonth, 1);
+    const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
     try {
       // Check if the selected event is an expense
       if (selectedEvent.isExpense) {
@@ -484,6 +533,15 @@ export default function HomePage() {
             }
             return true; // Keep other events
           });
+
+          if(expenseToRemove.date > beginningOfMonth && expenseToRemove.date < endOfMonth){
+            if(expenseToRemove.category == "Spending"){
+              setSpending(spending - parseFloat(expenseToRemove.cost));
+            }
+            else if(newExpense.category == "Essential"){
+              setEssential(essential - parseFloat(expenseToRemove.cost));
+            }
+          }
           setAllEvents(updatedEvents);
         }
       } else if (selectedEvent.isRecur){
@@ -505,6 +563,15 @@ export default function HomePage() {
             }
             return true; // Keep other events
           });
+
+          if(recurToRemove.date <= currentDay){
+            if(recurToRemove.category == "Spending"){
+              setSpending(spending - recurToRemove.cost);
+            }
+            else if(recurToRemove.category == "Essential"){
+              setEssential(essential - recurToRemove.cost);
+            }
+          }
           setAllEvents(updatedEvents);
         }
       } else {
