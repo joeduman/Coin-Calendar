@@ -40,21 +40,6 @@ CREATE TABLE IF NOT EXISTS `Recurring-Bill` (
   `cost` DECIMAL(10, 2) -- 10 digit upper limit, rounds to two decimal places for cents
 );
 
-CREATE TABLE IF NOT EXISTS `Budget-Info` (
-  `budgetID` INT AUTO_INCREMENT PRIMARY KEY, -- budget id, auto generated
-  `accountID` INT NOT NULL, -- associated account id that created the budget details
-  `currentBalance` DECIMAL(10, 2), -- balance that has been deposited for the decided budget span (money carries over from last month)
-  `amountSpent` DECIMAL(10, 2), -- total spent during the current budget span
-  `spendingPlan` DECIMAL(10, 2), -- total alloted money allowed to spend for the month
-  `frequency` ENUM('weekly', 'monthly', 'yearly') -- choice between a weekly, monthly, and yearly budget plan option
-);
-
-CREATE TABLE IF NOT EXISTS `resetpassword` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `username` VARCHAR(30) NOT NULL,
-  `code` TEXT NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS `Budget-Info` ( 
  `budgetID` INT PRIMARY KEY AUTO_INCREMENT,
  `accountID` INT NOT NULL,
@@ -63,6 +48,12 @@ CREATE TABLE IF NOT EXISTS `Budget-Info` (
  `monthlyEssentials` DECIMAL(10,2), 
  `monthlySpending` DECIMAL(10,2), 
  `frequency` ENUM('weekly', 'monthly', 'yearly')
+);
+
+CREATE TABLE IF NOT EXISTS `resetpassword` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(30) NOT NULL,
+  `code` TEXT NOT NULL
 );
 
 -- simple entry for a user into the database
