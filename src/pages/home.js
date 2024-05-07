@@ -747,7 +747,7 @@ export default function HomePage() {
   useEffect(() => {
     setExpectedBalance(balance*(spendingpercentage+essentialpercentage) - spending - essential);
     if((spending+essential) > expectedBalance){
-      setSavings((balance*savingpercentage)-(spending+essential));
+      setSavings((balance*savingpercentage) + expectedBalance);
     }else{
       setSavings((balance*savingpercentage));
     }
@@ -947,6 +947,7 @@ export default function HomePage() {
           <div className="titleCloseBtn">
             <button onClick={() => {closeModal2();}}> X </button>
           </div>
+          
 
           <div className="eventForm">
             <h2>Add Expense</h2>
