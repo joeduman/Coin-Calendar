@@ -746,7 +746,7 @@ export default function HomePage() {
 
   useEffect(() => {
     setExpectedBalance(balance*(spendingpercentage+essentialpercentage) - spending - essential);
-    if((spending+essential) > expectedBalance){
+    if((spending+essential) > (balance - (balance*savingpercentage))){
       setSavings((balance*savingpercentage) + expectedBalance);
     }else{
       setSavings((balance*savingpercentage));
@@ -800,7 +800,7 @@ export default function HomePage() {
                 Spending: <span style={{ color: '#2196f3' }}>{spendingpercentage * 100}%</span>
               </p1>
               <p>You have ${expectedBalance.toFixed(2)} left</p>
-              <progress className="progress-bar" max={(expectedBalance).toFixed(2)} value={(spending+essential).toFixed(2)} />
+              <progress className="progress-bar" max={(balance-(balance*savingpercentage)).toFixed(2)} value={(spending+essential).toFixed(2)} />
               <table className="budget">
                 <thead>
                   <tr>
