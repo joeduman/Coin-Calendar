@@ -733,7 +733,7 @@ export default function HomePage() {
                 Spending: <span style={{ color: '#2196f3' }}>{spendingpercentage * 100}%</span>
               </p1>
               <p>You have ${expectedBalance.toFixed(2)} left</p>
-              <progress className="progress-bar" max={(balance).toFixed(2)} value={(balance - expectedBalance).toFixed(2)} />
+              <progress className="progress-bar" max={(expectedBalance).toFixed(2)} value={(spending+essential).toFixed(2)} />
               <table className="budget">
                 <thead>
                   <tr>
