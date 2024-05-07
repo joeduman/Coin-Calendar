@@ -433,7 +433,7 @@ export default function HomePage() {
       // Reset the newrecurring state
       setNewRecurring({
         name: "",
-        category: "",
+        category: "Essential",
         date: "",
         cost: "",
         frequency: "",
@@ -551,7 +551,7 @@ export default function HomePage() {
           await axios.delete("http://localhost:5000/remove/recurring/" + selectedEvent.recurID);
           console.log('Expense deleted from the database successfully');
           // Remove the expense from the allExpenses array
-          const updatedRecurring = allExpenses.filter(recur => recur.recurID !== recurToRemove.recurID);
+          const updatedRecurring = allRecurring.filter(recur => recur.recurID !== recurToRemove.recurID);
           setAllRecurring(updatedRecurring);
           // Close the event details panel
           setSelectedEvent(null);
