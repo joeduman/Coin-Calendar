@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { HiOutlineQuestionMarkCircle } from "react-icons/hi";
+import { LuTimerReset } from "react-icons/lu";
 import { Link } from 'react-router-dom';
 import Modal from 'react-modal';
 import DatePicker from "react-datepicker";
@@ -39,10 +39,9 @@ export default function HomePage() {
   const [modal3Open, set3Open] = useState(false);
   const [modal4Open, set4Open] = useState(false);
   const [currentMonth,setCurrentMonth] = useState('');
-  const [currentMonthDigit,setCurrentMonthDigit] = useState(0);
   const [currentYear,setCurrentYear] = useState(0);
-  const [spending,setSpending] = useState(0.00);
-  const [essential,setEssential] = useState(0.00);
+  const [spending,setSpending] = useState(0.0);
+  const [essential,setEssential] = useState(0.0);
   const [savingpercentage,setSavingPercentage] = useState(0.0);
   const [essentialpercentage,setEssentialPercentage] = useState(0.0);
   const [spendingpercentage, setSpendingPercentage] = useState(0.0);
@@ -85,28 +84,8 @@ export default function HomePage() {
     const currentDate = new Date();
     const { currentMonth, currentMonthDigit, currentYear } = getCurrentMonthAndYear(currentDate);
     setCurrentMonth(currentMonth);
-    setCurrentMonthDigit(currentMonthDigit);
     setCurrentYear(currentYear);
   }, []);
-
-  const handleNavigate = (newDate) => {
-    const { currentMonth, currentYear } = getCurrentMonthAndYear(newDate);
-    setCurrentMonth(currentMonth);
-    setCurrentMonthDigit(currentMonthDigit);
-    setCurrentYear(currentYear);
-    if (username && currentMonthDigit && currentYear) {
-      axios.get(`http://localhost:5000/monthlySpent/${username}/${currentMonthDigit}/${currentYear}`)
-        .then(res => {
-          if (res.data) {
-            // Update the state by adding all formatted expenses to the allExpenses array
-            console.log(res.data);
-            setEssential(res.data.spentessential);
-          }
-        })
-        .catch(err => console.error('Error fetching expenses:', err));
-    }
-  };
-  
 
   //EVENT
   const [newEvent, setNewEvent] = useState({
@@ -141,9 +120,10 @@ export default function HomePage() {
   const [allRecurring, setAllRecurring] = useState(recurringBills)
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [allEvents, setAllEvents] = useState(events);
-  const [balance, setBalance] = useState(0);
-  const [expectedBalance, setExpectedBalance] = useState(0);
-  const [updatedBalance, setUpdatedBalance] = useState(0);
+  const [balance, setBalance] = useState(0); //total deposited
+  const [savings, setSavings] = useState(0); //savings
+  const [expectedBalance, setExpectedBalance] = useState(0); //budget num from total deposited
+  const [updatedBalance, setUpdatedBalance] = useState(0); //savings num
   const [username, setUsername] = useState('');
   const [accountID, setAccountID] = useState('');
 
@@ -174,17 +154,6 @@ export default function HomePage() {
     setUsername(storedUsername);
     
   }, []);
-
-  useEffect(() => {
-    const totalCostExpenses = allExpenses.reduce((total, expense) => {
-      return total + parseFloat(expense.cost);
-    }, 0);
-    const totalCostRecurringBills = allRecurring.reduce((total, recurring) => {
-      return total + parseFloat(recurring.cost);
-    }, 0);
-
-    setExpectedBalance(balance - totalCostExpenses - totalCostRecurringBills);
-  }, [balance, allExpenses, allRecurring]);
 
   function formatDateSQL(date) {
     // Extract the year, month, day, hours, minutes, and seconds from the date object
@@ -225,7 +194,6 @@ export default function HomePage() {
 
     setNewRecurring({ ...newRecur, cost: inputValue });
   };
-
 
   async function handleAddEvent() {
     if ((String(newEvent.name).length || String(newEvent.description).length) > 12) {
@@ -439,7 +407,6 @@ export default function HomePage() {
   }
 
   function handleUpdateBalance() {
-    setBalance(balance + updatedBalance);
     const updateTotalBalance = async () => {
       try {
         await axios.put(`http://localhost:5000/balance`, {
@@ -447,6 +414,7 @@ export default function HomePage() {
           totalBalance: balance + updatedBalance
         });
         console.log("Total balance updated successfully.");
+        setBalance(balance + updatedBalance);
       } catch (error) {
         console.error("Error updating total balance:", error);
       }
@@ -454,6 +422,24 @@ export default function HomePage() {
 
     updateTotalBalance();
     localStorage.setItem('balance', balance + updatedBalance);
+  }
+
+  async function handleResetBalance() {
+    const updateResetBalance = async () => {
+      try {
+        await axios.put(`http://localhost:5000/balance`, {
+          accountID,
+          totalBalance: 0
+        });
+        console.log("Total balance updated successfully.");
+        setBalance(0);
+      } catch (error) {
+        console.error("Error updating total balance:", error);
+      }
+    };
+
+    updateResetBalance();
+    localStorage.setItem('balance', 0);
   }
 
   function handleEventClick(event) {
@@ -663,18 +649,18 @@ export default function HomePage() {
   }, [username]);
 
   useEffect(() => {
-    if (username && currentMonthDigit && currentYear) {
-      axios.get(`http://localhost:5000/monthlySpent/${username}/${currentMonthDigit}/${currentYear}`)
+    if (username) {
+      axios.get(`http://localhost:5000/monthlySpent/${username}`)
         .then(res => {
           if (res.data) {
             // Update the state by adding all formatted expenses to the allExpenses array
-            console.log(res.data);
-            setEssential(res.data.spentessential);
+            setEssential(res.data.spentExpenseEssential + res.data.spentRecurringEssential);
+            setSpending(res.data.spentExpenseSpending + res.data.spentRecurringSpending);
           }
         })
         .catch(err => console.error('Error fetching expenses:', err));
     }
-  }, [username, currentMonthDigit, currentYear]);
+  }, [username]);
 
   useEffect(() => {
     if (username) {
@@ -691,6 +677,15 @@ export default function HomePage() {
     }
   }, [username]);
 
+  useEffect(() => {
+    setExpectedBalance(balance*(spendingpercentage+essentialpercentage) - spending - essential);
+    if((spending+essential) > expectedBalance){
+      setSavings((balance*0.2)-(spending+essential));
+    }else{
+      setSavings((balance*0.2));
+    }
+  }, [balance, expectedBalance, spending, essential, spendingpercentage, essentialpercentage]);
+
 
 
   return (
@@ -706,10 +701,7 @@ export default function HomePage() {
       </nav>
 
       <div className="Home">
-        <h1><u>{username}'s Coin Calendar</u>
-          <HiOutlineQuestionMarkCircle
-            className="hover-tooltip"/>
-        </h1>
+        <h1>{username}'s Coin Calendar</h1>
 
         <div className="container">
           <div className="calendar-container">
@@ -721,7 +713,6 @@ export default function HomePage() {
               style={{ height: 750 }}
               onSelectEvent={handleEventClick}
               eventPropGetter={eventStyleGetter}
-              onNavigate={handleNavigate}
             />
           </div>
 
@@ -730,19 +721,19 @@ export default function HomePage() {
           <div className="rightside">
 
             <div className="widget" id="totalsavings">
-                <h2>Total Savings</h2>
-                <p>${balance.toFixed(2)}</p>
+                <h2>{currentMonth} {currentYear} Savings <button onClick={handleResetBalance} className = "reset">reset <LuTimerReset/></button></h2>
+                <p style={{ color: savings < 0 ? 'red' : 'green' }}>${savings.toFixed(2)}</p>
               </div>
 
             <div className="widget">
-              <h2>Monthly Budget</h2>
+              <h2>{currentMonth} {currentYear} Budget</h2>
               <p1>
-                Savings: <span style={{ color: 'purple' }}>{savingpercentage * 100}%</span>    
-                Essentials: <span style={{ color: 'purple' }}>{essentialpercentage * 100}%</span>    
-                Spending: <span style={{ color: 'purple' }}>{spendingpercentage * 100}%</span>
+                Savings: <span style={{ color: '#2196f3' }}>{savingpercentage * 100}%</span>    
+                Essentials: <span style={{ color: '#2196f3' }}>{essentialpercentage * 100}%</span>    
+                Spending: <span style={{ color: '#2196f3' }}>{spendingpercentage * 100}%</span>
               </p1>
               <p>You have ${expectedBalance.toFixed(2)} left</p>
-              <progress className="progress-bar" max={balance.toFixed(2)} value={(balance - expectedBalance).toFixed(2)} />
+              <progress className="progress-bar" max={(balance).toFixed(2)} value={(balance - expectedBalance).toFixed(2)} />
               <table className="budget">
                 <thead>
                   <tr>
@@ -752,14 +743,14 @@ export default function HomePage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="spent">${(balance - expectedBalance).toFixed(2)}</td>
+                    <td className="spent">${(spending+essential).toFixed(2)}</td>
                     <td className="remain">${expectedBalance.toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <div className="widget" id="balances">
-              <h2>{currentMonth} {currentYear}</h2>
+              <h2>{currentMonth} {currentYear} Costs</h2>
               <table className="budget">
                 <thead>
                   <tr>
@@ -769,8 +760,8 @@ export default function HomePage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="spent">${spending/*.toFixed(2) ERROR HERE*/}</td>
-                    <td className="spent">${essential/*.toFixed(2) ERROR HERE*/}</td>
+                    <td className="spent">${spending.toFixed(2)}</td>
+                    <td className="spent">${essential.toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
