@@ -414,9 +414,9 @@ app.put('/updateBudget', (req, res) => {
         Essentials = 0.5;
         Spending = 0.3;
     } else if (selectedBudget === "Option 3") {
-        Savings = 0.2;
+        Savings = 0.3;
         Essentials = 0.6;
-        Spending = 0.2;
+        Spending = 0.1;
     } else if (selectedBudget === "Option 4") {
         Savings = 0.1;
         Essentials = 0.4;
