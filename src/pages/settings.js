@@ -10,10 +10,15 @@ export default function SettingsPage() {
     const [changePassword, setChangePassword] = useState(false);
 
     useEffect(() => {
-        // Fetch username from local storage
+        //Fetch username from local storage
         const storedUsername = localStorage.getItem('username');
+        if (!storedUsername) {
+          window.location.href = '/?';
+        } else {
         setUsername(storedUsername);
-    }, []);
+        }
+        
+      }, []);
 
     useEffect(() => {
         if (username) {

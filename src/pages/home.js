@@ -127,6 +127,17 @@ export default function HomePage() {
   const [username, setUsername] = useState('');
   const [accountID, setAccountID] = useState('');
 
+  useEffect(() => {
+    //Fetch username from local storage
+    const storedUsername = localStorage.getItem('username');
+    if (!storedUsername) {
+      window.location.href = '/?';
+    } else {
+    setUsername(storedUsername);
+    }
+    
+  }, []);
+
     /////////GET ACCOUNTID FOR CREATING EVENTS AND EXPENSES
     useEffect(() => {
       if (username) {
@@ -148,12 +159,7 @@ export default function HomePage() {
       }
     }, [username]);
     
-  useEffect(() => {
-    //Fetch username from local storage
-    const storedUsername = localStorage.getItem('username');
-    setUsername(storedUsername);
-    
-  }, []);
+
 
   function formatDateSQL(date) {
     // Extract the year, month, day, hours, minutes, and seconds from the date object
@@ -758,6 +764,11 @@ export default function HomePage() {
     }
   }, [balance, expectedBalance, spending, essential, spendingpercentage, essentialpercentage]);
 
+  const handleLogout = () => {
+    setUsername("");
+    localStorage.clear();
+  };
+
 
 
   return (
@@ -768,7 +779,7 @@ export default function HomePage() {
           <li className="active"><Link to="/home">Home</Link></li>
           <li><Link to="/:username/dashboard">Dashboard</Link></li>
           <li><Link to="/:username/settings">Settings</Link></li>
-          <li><Link to="/">Log Out</Link></li>
+          <li onClick={handleLogout}><Link to="/">Log Out</Link></li>
         </ul>
       </nav>
 

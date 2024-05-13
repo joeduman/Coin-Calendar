@@ -16,10 +16,15 @@ const DashboardPage = () => {
 
 
     useEffect(() => {
-        // Fetch username from local storage
+        //Fetch username from local storage
         const storedUsername = localStorage.getItem('username');
+        if (!storedUsername) {
+          window.location.href = '/?';
+        } else {
         setUsername(storedUsername);
-    }, []);
+        }
+        
+      }, []);
 
     useEffect(() => {
         const storedBalance = localStorage.getItem('balance');
