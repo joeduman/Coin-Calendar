@@ -56,9 +56,3 @@ CREATE TABLE IF NOT EXISTS `resetpassword` (
   `code` TEXT NOT NULL
 );
 
--- simple entry for a user into the database
-INSERT INTO `Account` (`username`, `password`, `fname`, `lname`, `email`, `phone`)
-VALUES("testAccount", "testPassword", "Jack", "Black", "coincalendartest@gmail.com", "111-111-1111");
-
--- simple test query
-SELECT * FROM `Account`;
