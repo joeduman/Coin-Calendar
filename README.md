@@ -7,7 +7,7 @@ To get started, make sure you have Node.js installed on your machine. You can do
 ### 1. Clone this repository to your local machine: 
 `git clone https://github.com/joeduman/Coin-Calendar`
 ### 2. Navigate to the project directory:
-cd Coin-Calendar
+`cd Coin-Calendar`
 ### 3. Install dependencies:
 `npm install`
 
