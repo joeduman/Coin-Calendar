@@ -1,6 +1,6 @@
 # Welcome to the Coin Calendar
 
-### Visit the Coin Calendar web-app here: `[link](http://52.72.239.37/)`
+### Visit the Coin Calendar web-app here: `http://52.72.239.37/`
 
 ### Setting up the Coin Calendar on your LOCAL machine:
 To get started, make sure you have Node.js installed on your machine. You can download it from `https://nodejs.org/en`
